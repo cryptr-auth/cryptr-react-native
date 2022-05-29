@@ -40,13 +40,13 @@
     "ios",
     "android"
   ],
-  "repository": "https://cryptr.co",
+  "repository": "https://github.com/cryptr-auth/cryptr-react-native.git",
   "author": "Cryptr <thibaud@cryptr.co> (https://www.cryptr.co)",
   "license": "MIT",
   "bugs": {
-    "url": "https://cryptr.co/issues"
+    "url": "https://github.com/cryptr-auth/cryptr-react-native.git/issues"
   },
-  "homepage": "https://cryptr.co#readme",
+  "homepage": "https://github.com/cryptr-auth/cryptr-react-native.git#readme",
   "publishConfig": {
     "registry": "http://localhost:4873"
   },
