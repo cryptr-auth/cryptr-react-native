@@ -28,7 +28,7 @@ import {
   refreshBody,
   tokensBody,
 } from '../utils/helpers';
-import { DeviceEventEmitter } from 'react-native';
+import { DeviceEventEmitter, Platform } from 'react-native';
 
 const CryptrProvider: React.FC<ProviderProps> = ({
   children,
@@ -166,16 +166,18 @@ const CryptrProvider: React.FC<ProviderProps> = ({
       setUnAuthenticated();
       if (slo_code) {
         let sloUrl = sloAfterRevokeTokenUrl(config, slo_code);
-        Cryptr.startSecuredView(
-          sloUrl,
-          (_data: any) => {
-            callback && callback(json);
-          },
-          (error: any) => {
-            setError(error);
-            errorCallback && errorCallback(error);
-          }
-        );
+        if (Platform.OS === 'android') {
+          Cryptr.startSecuredView(
+            sloUrl,
+            (_data: any) => {
+              callback && callback(json);
+            },
+            (error: any) => {
+              setError(error);
+              errorCallback && errorCallback(error);
+            }
+          );
+        }
       } else {
         if (callback) callback(json);
       }
