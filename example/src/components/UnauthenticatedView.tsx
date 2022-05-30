@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { SsoSignInButton } from '@cryptr/cryptr-react-native';
-import { IDP_ID } from 'example/cryptrConfig.template';
+import { IDP_ID } from '../../cryptrConfig.template';
 
 export const unauthStyles = StyleSheet.create({
   ssoBtnContainer: {

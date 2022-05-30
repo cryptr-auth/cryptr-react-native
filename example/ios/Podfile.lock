@@ -342,7 +342,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  cryptr-cryptr-react-native: f2ba2a9cc7db0dffed375f4060d0decf45f00a4f
+  cryptr-cryptr-react-native: 783004a7f75a4bf2a6c0876fc460dc53f904b8fd
   DoubleConversion: cde416483dac037923206447da6e1454df403714
   FBLazyVector: 3bb422f41b18121b71783a905c10e58606f7dc3e
   FBReactNativeSpec: f2c97f2529dd79c083355182cc158c9f98f4bd6e
