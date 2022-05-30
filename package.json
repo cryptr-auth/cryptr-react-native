@@ -1,6 +1,6 @@
 {
   "name": "@cryptr/cryptr-react-native",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "React Native SDK for Cryptr Authentication",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
