@@ -16,6 +16,10 @@ interface CryptrInterface {
     successCallback?: (data: any) => any,
     errorCallback?: (error: any) => any
   ) => any;
+  removeRefresh: (
+    successCallback?: (data: any) => any,
+    errorCallback?: (error: any) => any
+  ) => any;
   setRefresh: (
     refreshToken: string,
     successCallback?: (data: any) => any,

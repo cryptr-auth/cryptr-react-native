@@ -164,26 +164,33 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     const { revoked_at, slo_code } = json;
     if (revoked_at) {
       setUnAuthenticated();
-      if (slo_code) {
-        let sloUrl = sloAfterRevokeTokenUrl(config, slo_code);
-        if (Platform.OS === 'android') {
-          Cryptr.startSecuredView(
-            sloUrl,
-            (_data: any) => {
-              callback && callback(json);
-            },
-            (error: any) => {
-              setError(error);
-              errorCallback && errorCallback(error);
+      Cryptr.removeRefresh(
+        (_data: any) => {
+          if (slo_code) {
+            let sloUrl = sloAfterRevokeTokenUrl(config, slo_code);
+            if (Platform.OS === 'android') {
+              Cryptr.startSecuredView(
+                sloUrl,
+                (_d: any) => {
+                  callback && callback(json);
+                },
+                (error: any) => {
+                  setError(error);
+                  errorCallback && errorCallback(error);
+                }
+              );
             }
-          );
+          } else {
+            if (callback) callback(json);
+          }
+        },
+        (error: any) => {
+          errorCallback && errorCallback(error);
         }
-      } else {
-        if (callback) callback(json);
-      }
+      );
     } else {
       setUnloading();
-      if (callback) callback(json);
+      if (errorCallback) errorCallback(json);
     }
   };
 
@@ -259,7 +266,11 @@ const CryptrProvider: React.FC<ProviderProps> = ({
         }
       },
       (error: any) => {
-        setError(error);
+        dispatch({
+          type: CryptrReducerActionKind.UNAUTHENTICATED,
+          payload: { error: error },
+        });
+        errorCallback && errorCallback(error);
       }
     );
   };
