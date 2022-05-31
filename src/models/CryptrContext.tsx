@@ -12,7 +12,8 @@ const initialContext = {
   config: error as unknown as () => CryptrConfig,
   signinWithSSO: error as unknown as (
     idpId: string,
-    callback?: (data: any) => any
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
   ) => void,
   logOut: error as unknown as (
     successCallback?: (data: any) => any,

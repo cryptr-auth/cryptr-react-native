@@ -143,15 +143,20 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     };
   };
 
-  const signInWithSSO = (idpId: string, callback?: (data: any) => any) => {
+  const signInWithSSO = (
+    idpId: string,
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
+  ) => {
     let ssoTransaction = new Transaction(config.default_redirect_uri, Sign.SSO);
     let ssoUrl = ssoSignUrl(config, ssoTransaction, idpId);
     setLoading();
     Cryptr.startSecuredView(
       ssoUrl,
-      handleRedirectCalback(ssoTransaction, callback),
+      handleRedirectCalback(ssoTransaction, successCallback),
       (error: any) => {
         setError(error);
+        errorCallback && errorCallback(error);
       }
     );
   };
@@ -305,8 +310,11 @@ const CryptrProvider: React.FC<ProviderProps> = ({
       value={{
         ...state,
         config: () => config,
-        signinWithSSO: (idpId: string, callback?: (data: any) => any) =>
-          signInWithSSO(idpId, callback),
+        signinWithSSO: (
+          idpId: string,
+          successCallback?: (data: any) => any,
+          errorCallback?: (data: any) => any
+        ) => signInWithSSO(idpId, successCallback, errorCallback),
         logOut: (
           successCallback?: (data: any) => any,
           errorCallback?: (error: any) => any
