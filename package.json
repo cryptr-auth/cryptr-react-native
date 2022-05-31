@@ -1,6 +1,6 @@
 {
   "name": "@cryptr/cryptr-react-native",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "description": "React Native SDK for Cryptr Authentication",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -47,9 +47,6 @@
     "url": "https://github.com/cryptr-auth/cryptr-react-native.git/issues"
   },
   "homepage": "https://github.com/cryptr-auth/cryptr-react-native.git#readme",
-  "publishConfig": {
-    "registry": "http://localhost:4873"
-  },
   "devDependencies": {
     "@commitlint/config-conventional": "^11.0.0",
     "@react-native-community/eslint-config": "^2.0.0",
