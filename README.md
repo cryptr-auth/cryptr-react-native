@@ -129,47 +129,58 @@ import { useCryptr } from `@cryptr/cryptr-react-native`
 
 // ...
 
-const { /**/ } = useCryptr()
+const { /* Any required hook */ } = useCryptr()
 ```
 
 #### isAuthenticated
 
 Hook to know if a Cryptr session is active
 
-The return type is a boolean
+The return type is a <u>**boolean**</u>
 
 ```js
 const { isAuthenticated } = useCryptr()
+
+if(isAuthenticated) { /**/ }
 ```
 
 #### user
 
 Hook to retrieve the User information (extracted from current oAuth Cryptr active session ID Token)
 
-The return type is a key/value pair Object.
+The return type is a <u>**key/value pair Object.**</u>
 
 ```js
 const { user } = useCryptr()
+
+// ...
+user()
 ```
 
 #### accessToken
 
 Hook to retrieve the current accessToken value
 
-The return type is a string.
+The return type is a <u>** nullable string**</u>.
 
 ```js
 const { accessToken } = useCryptr()
+
+//..
+{accessToken && <Text>{accessToken}</Text>}
 ```
 
 #### idToken
 
 Hook to retrieve the current idToken value
 
-The return type is a string.
+The return type is a <u>**string**</u>.
 
 ```js
 const { idToken } = useCryptr()
+
+//...
+{idToken && <Text>{idToken}</Text>}
 ```
 
 --
@@ -182,9 +193,11 @@ Hook action to sign in the user using a specific SSO.
 *Requires* `idpId` value.
 
 
-
 ```js
 const { signinWithSSO } = useCryptr()
+
+// [...]
+signinWithSSO(idpID: string, successCallback?: (data: any) => any, errorCallback?: (data: any) => any)
 ```
 
 #### refreshTokens
@@ -193,6 +206,9 @@ Hook action to refresh tokens to new ones.
 
 ```js
 const { refreshTokens } = useCryptr()
+
+// [...]
+refreshTokens(callback?: (data: any) => any)
 ```
 
 #### logOut
@@ -202,6 +218,10 @@ Hook action to log out user.
 
 ```js
 const { logOut } = useCryptr()
+
+// [...]
+
+logOut(successCallback?: (data: any) => any, errorCallback?: (data: any) => any)
 ```
 
 --
@@ -220,7 +240,7 @@ const { error } = useCryptr()
 
 Hook to inform you about that a Cryptr process is in progress.
 
-The return type is a boolean
+The return type is a <u>**boolean**</u>
 
 ```js
 const { isLoading } = useCryptr()
