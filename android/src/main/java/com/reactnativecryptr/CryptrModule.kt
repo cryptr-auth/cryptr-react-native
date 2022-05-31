@@ -105,6 +105,17 @@ class CryptrModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
     }
 
     @ReactMethod(isBlockingSynchronousMethod = true)
+    fun removeRefresh(successCallback: Callback, errorCallback: Callback) {
+       val editor: SharedPreferences.Editor = this.sharedPreferences.edit();
+      editor.remove(REFRESH_TOKEN_KEY);
+      if(editor.commit()) {
+        successCallback.invoke("Refresh removed");
+      } else {
+        errorCallback.invoke("Error while removing refresh");
+      }
+    }
+
+    @ReactMethod(isBlockingSynchronousMethod = true)
     fun startSecuredView(
       uri: String,
       successCallback: Callback,

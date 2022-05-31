@@ -9,7 +9,7 @@ import {
 import { styles } from '../styles';
 import HorizontalDivider from './HorizontalDivider';
 import TokenView from './TokenView';
-import { IDP_ID } from 'example/cryptrConfig.template';
+import { IDP_ID } from '../../cryptrConfig.template';
 
 const AuthenticatedView = () => {
   const { accessToken, decoratedRequest, user } = useCryptr();

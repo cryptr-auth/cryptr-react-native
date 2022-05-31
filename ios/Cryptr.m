@@ -62,6 +62,27 @@ RCT_EXPORT_METHOD(setRefresh:(NSString *)value
     }
 }
 
+RCT_EXPORT_METHOD(removeRefresh:(RCTResponseSenderBlock)callback
+                              errorCallback:(RCTResponseSenderBlock)errorCallback)
+{
+    NSDictionary* removeQuery = @{
+      (__bridge id)kSecClass : (__bridge id)kSecClassGenericPassword,
+      (__bridge id)kSecAttrAccount : REFRESH_TOKEN_KEY,
+      (__bridge id)kSecReturnData : (__bridge id)kCFBooleanTrue
+    };
+
+    OSStatus removeStatus = SecItemDelete((__bridge CFDictionaryRef)removeQuery);
+
+    if (removeStatus == noErr) {
+        callback(@[@"Refresh removed"]);
+    }
+
+    else {
+        NSError* error = [NSError errorWithDomain:[[NSBundle mainBundle] bundleIdentifier] code:removeStatus userInfo: nil];
+        errorCallback(@[@"An error occured while removing value"]);
+    }
+}
+
 RCT_EXPORT_METHOD(getRefresh:(RCTResponseSenderBlock)callback
                               errorCallback:(RCTResponseSenderBlock)errorCallback)
 {

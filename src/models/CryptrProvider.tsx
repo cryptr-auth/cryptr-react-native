@@ -28,7 +28,7 @@ import {
   refreshBody,
   tokensBody,
 } from '../utils/helpers';
-import { DeviceEventEmitter } from 'react-native';
+import { DeviceEventEmitter, Platform } from 'react-native';
 
 const CryptrProvider: React.FC<ProviderProps> = ({
   children,
@@ -143,15 +143,20 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     };
   };
 
-  const signInWithSSO = (idpId: string, callback?: (data: any) => any) => {
+  const signInWithSSO = (
+    idpId: string,
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
+  ) => {
     let ssoTransaction = new Transaction(config.default_redirect_uri, Sign.SSO);
     let ssoUrl = ssoSignUrl(config, ssoTransaction, idpId);
     setLoading();
     Cryptr.startSecuredView(
       ssoUrl,
-      handleRedirectCalback(ssoTransaction, callback),
+      handleRedirectCalback(ssoTransaction, successCallback),
       (error: any) => {
         setError(error);
+        errorCallback && errorCallback(error);
       }
     );
   };
@@ -164,24 +169,33 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     const { revoked_at, slo_code } = json;
     if (revoked_at) {
       setUnAuthenticated();
-      if (slo_code) {
-        let sloUrl = sloAfterRevokeTokenUrl(config, slo_code);
-        Cryptr.startSecuredView(
-          sloUrl,
-          (_data: any) => {
-            callback && callback(json);
-          },
-          (error: any) => {
-            setError(error);
-            errorCallback && errorCallback(error);
+      Cryptr.removeRefresh(
+        (_data: any) => {
+          if (slo_code) {
+            let sloUrl = sloAfterRevokeTokenUrl(config, slo_code);
+            if (Platform.OS === 'android') {
+              Cryptr.startSecuredView(
+                sloUrl,
+                (_d: any) => {
+                  callback && callback(json);
+                },
+                (error: any) => {
+                  setError(error);
+                  errorCallback && errorCallback(error);
+                }
+              );
+            }
+          } else {
+            if (callback) callback(json);
           }
-        );
-      } else {
-        if (callback) callback(json);
-      }
+        },
+        (error: any) => {
+          errorCallback && errorCallback(error);
+        }
+      );
     } else {
       setUnloading();
-      if (callback) callback(json);
+      if (errorCallback) errorCallback(json);
     }
   };
 
@@ -257,7 +271,11 @@ const CryptrProvider: React.FC<ProviderProps> = ({
         }
       },
       (error: any) => {
-        setError(error);
+        dispatch({
+          type: CryptrReducerActionKind.UNAUTHENTICATED,
+          payload: { error: error },
+        });
+        errorCallback && errorCallback(error);
       }
     );
   };
@@ -292,8 +310,11 @@ const CryptrProvider: React.FC<ProviderProps> = ({
       value={{
         ...state,
         config: () => config,
-        signinWithSSO: (idpId: string, callback?: (data: any) => any) =>
-          signInWithSSO(idpId, callback),
+        signinWithSSO: (
+          idpId: string,
+          successCallback?: (data: any) => any,
+          errorCallback?: (data: any) => any
+        ) => signInWithSSO(idpId, successCallback, errorCallback),
         logOut: (
           successCallback?: (data: any) => any,
           errorCallback?: (error: any) => any
