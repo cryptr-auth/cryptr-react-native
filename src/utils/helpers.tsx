@@ -107,3 +107,12 @@ export const deviceCryptrLocale = (): Locale => {
     (Locale[lang as keyof typeof Locale] as Locale) || Locale.EN;
   return dLocale;
 };
+
+export const organizationDomain = (
+  refreshToken: string
+): string | undefined => {
+  if (refreshToken.includes('.')) {
+    return refreshToken.split('.')[0];
+  }
+  return undefined;
+};
