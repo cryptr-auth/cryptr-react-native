@@ -36,10 +36,12 @@ export interface CryptrConfig {
   region?: string;
   cryptr_base_url?: string;
   telemetry?: boolean;
+  dedicated_server?: boolean;
 }
 
 export interface PreparedCryptrConfig extends CryptrConfig {
   cryptr_base_url: string;
+  dedicated_server: boolean;
 }
 
 export interface ProviderOptions extends CryptrConfig {}

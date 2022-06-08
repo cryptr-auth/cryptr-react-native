@@ -27,6 +27,7 @@ export const prepareConfig = (
     cryptr_base_url: finalCryptrBaseUrl(options),
     default_locale: options.default_locale || deviceCryptrLocale(),
     default_redirect_uri: options.default_redirect_uri,
+    dedicated_server: options.dedicated_server || false,
   };
 };
 
