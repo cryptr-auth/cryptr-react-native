@@ -83,7 +83,11 @@ export const ssoGatewayUrl = (
   ssoTransaction: Transaction,
   idpId?: string | string[]
 ) => {
-  const { cryptr_base_url, client_id } = config;
+  const { cryptr_base_url, client_id, dedicated_server, tenant_domain } =
+    config;
+  const cryptrBaseUrl = dedicated_server
+    ? cryptr_base_url
+    : [cryptr_base_url, 't', tenant_domain, ''].join('/');
   const {
     redirectUri,
     scope,
@@ -111,7 +115,7 @@ export const ssoGatewayUrl = (
       });
     }
   }
-  return urlBuilder([cryptr_base_url], queryParams);
+  return urlBuilder([cryptrBaseUrl], queryParams);
 };
 
 export const revokeTokenUrl = (

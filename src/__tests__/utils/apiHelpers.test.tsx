@@ -236,6 +236,27 @@ describe('aiHelpers#ssoGatewayUrl', () => {
     let url = ssoGatewayUrl(config, transaction);
     let searchParams = new URLSearchParams(url);
 
+    expect(url).toMatch(
+      'https://cryptr.authent.me/t/shark-academy/?client_id=123-aze'
+    );
+    expect(searchParams.get('idp_id')).toBeNull();
+    expect(searchParams.get('idp_ids[]')).toBeNull();
+    expect(searchParams.get('locale')).toEqual('en');
+    expect(searchParams.get('client_state')).toEqual(transaction.pkce.state);
+    expect(searchParams.get('scope')).toEqual(transaction.scope);
+    expect(searchParams.get('redirect_uri')).toEqual('cryptr://app');
+    expect(searchParams.get('code_challenge')).toEqual(
+      transaction.pkce.codeChallenge
+    );
+    expect(searchParams.get('code_challenge_method')).toEqual(
+      transaction.pkce.codeChallengeMethod
+    );
+  });
+
+  it('should returns deicated standard url', () => {
+    let url = ssoGatewayUrl({ ...config, dedicated_server: true }, transaction);
+    let searchParams = new URLSearchParams(url);
+
     expect(url).toMatch('https://cryptr.authent.me/?client_id=123-aze');
     expect(searchParams.get('idp_id')).toBeNull();
     expect(searchParams.get('idp_ids[]')).toBeNull();
@@ -255,7 +276,9 @@ describe('aiHelpers#ssoGatewayUrl', () => {
     let url = ssoGatewayUrl(config, transaction, 'skar_academy_123ded');
     let searchParams = new URLSearchParams(url);
 
-    expect(url).toMatch('https://cryptr.authent.me/?client_id=123-aze');
+    expect(url).toMatch(
+      'https://cryptr.authent.me/t/shark-academy/?client_id=123-aze'
+    );
     expect(searchParams.get('idp_id')).toEqual('skar_academy_123ded');
     expect(searchParams.get('idp_ids[]')).toBeNull();
     expect(searchParams.get('locale')).toEqual('en');
@@ -277,7 +300,9 @@ describe('aiHelpers#ssoGatewayUrl', () => {
     ]);
     let searchParams = new URLSearchParams(url);
 
-    expect(url).toMatch('https://cryptr.authent.me/?client_id=123-aze');
+    expect(url).toMatch(
+      'https://cryptr.authent.me/t/shark-academy/?client_id=123-aze'
+    );
     expect(searchParams.get('idp_id')).toBeNull();
     expect(searchParams.getAll('idp_ids[]')).toEqual([
       'skar_academy_123ded',

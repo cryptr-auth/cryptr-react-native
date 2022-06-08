@@ -165,6 +165,39 @@ describe('CryptrSsoGatewayButton', () => {
     const startSecuredViewFn = jest.spyOn(Cryptr, 'startSecuredView');
     fireEvent.press(item);
     expect(startSecuredViewFn).toHaveBeenCalledWith(
+      expect.stringContaining(
+        'https://auth.cryptr.eu/t/shark_academy/?client_id=123'
+      ),
+      expect.anything(),
+      expect.anything()
+    );
+    expect(startSecuredViewFn).toHaveBeenCalledWith(
+      expect.not.stringContaining('idp_id='),
+      expect.anything(),
+      expect.anything()
+    );
+
+    expect(startSecuredViewFn).toHaveBeenCalledWith(
+      expect.not.stringContaining('idp_ids%5B%5D='),
+      expect.anything(),
+      expect.anything()
+    );
+
+    startSecuredViewFn.mockRestore();
+  });
+
+  it('should start standard dedicated gateway process on press action', () => {
+    const { getByText } = render(
+      <CryptrProvider {...config} dedicated_server={true}>
+        <CryptrSsoGatewayButton>
+          <Text>Custom idp content</Text>
+        </CryptrSsoGatewayButton>
+      </CryptrProvider>
+    );
+    const item = getByText('Custom idp content');
+    const startSecuredViewFn = jest.spyOn(Cryptr, 'startSecuredView');
+    fireEvent.press(item);
+    expect(startSecuredViewFn).toHaveBeenCalledWith(
       expect.stringContaining('https://auth.cryptr.eu/?client_id'),
       expect.anything(),
       expect.anything()
