@@ -1,7 +1,11 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { SsoGatewayButton, SsoSignInButton, useCryptr } from '@cryptr/cryptr-react-native';
-import { IDP_ID } from '../../cryptrConfig.template';
+import {
+  SsoGatewayButton,
+  SsoSignInButton,
+  useCryptr,
+} from '@cryptr/cryptr-react-native';
+import { IDP_ID, IDP_ID2 } from '../../cryptrConfig.template';
 import { styles } from '../styles';
 import HorizontalDivider from './HorizontalDivider';
 
@@ -34,7 +38,10 @@ const UnauthenticatedView = () => {
         >
           <Text>Gateway on IDP</Text>
         </Pressable>
-        <SsoGatewayButton idpId={[IDP_ID]} text="Gateway with multiple IDPs" />
+        <SsoGatewayButton
+          idpId={[IDP_ID, IDP_ID2]}
+          text="Gateway with multiple IDPs"
+        />
       </View>
     </>
   );
