@@ -22,6 +22,12 @@ type SsoGatewayProps = {
   children?: JSX.Element;
 };
 
+const checkIdpValue = (idpvalue: string) => {
+  if (idpvalue.trim() === '') {
+    throw new Error('Please provide non blank string(s) for idpId');
+  }
+};
+
 const CryptrSsoGatewayButton = ({
   buttonStyle,
   buttonTextStyle,
@@ -34,6 +40,17 @@ const CryptrSsoGatewayButton = ({
 }: SsoGatewayProps): JSX.Element => {
   const { config, isAuthenticated, isLoading, signinWithSSOGateway } =
     useCryptr();
+
+  if (idpId !== undefined) {
+    if (typeof idpId === 'string') {
+      checkIdpValue(idpId);
+    } else if (idpId.length === 0) {
+      throw new Error('Please provide non blank string(s) for idpId');
+    } else {
+      idpId.forEach((id) => checkIdpValue(id));
+    }
+  }
+
   const textValue = (): string => {
     if (text) {
       return text;
