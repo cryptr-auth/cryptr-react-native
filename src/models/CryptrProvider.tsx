@@ -249,23 +249,31 @@ const CryptrProvider: React.FC<ProviderProps> = ({
 
   const handleRefreshResponse = (
     json: any,
-    successCallback?: (data: any) => any
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
   ) => {
-    if (json.refresh_token) {
-      Cryptr.setRefresh(
-        json.refresh_token,
-        (_data: any) => {},
-        (error: any) => {
-          setError(error);
-        }
-      );
-    }
-    if (json.access_token) {
-      setAuthenticated(json);
+    if (json.error) {
+      dispatch({
+        type: CryptrReducerActionKind.UNAUTHENTICATED,
+        payload: json,
+      });
+      errorCallback && errorCallback(json);
     } else {
+      if (json.refresh_token) {
+        Cryptr.setRefresh(
+          json.refresh_token,
+          (_data: any) => {},
+          (error: any) => {
+            setError(error);
+          }
+        );
+      }
+      if (json.access_token) {
+        setAuthenticated(json);
+      }
       setUnloading();
+      successCallback && successCallback(json);
     }
-    successCallback && successCallback(json);
   };
 
   const refreshTokens = (
@@ -279,7 +287,7 @@ const CryptrProvider: React.FC<ProviderProps> = ({
           getTokensByRefresh(refreshvalue)
             .then((resp) => resp.json())
             .then((json) => {
-              handleRefreshResponse(json, successCallback);
+              handleRefreshResponse(json, successCallback, errorCallback);
             })
             .catch((error) => {
               setError(error);
@@ -305,7 +313,10 @@ const CryptrProvider: React.FC<ProviderProps> = ({
       Sign.REFRESH
     );
     let body = refreshBody(refreshToken, refreshTransaction, config);
-    return jsonApiRequest(refreshTokenUrl(config, refreshTransaction), body);
+    return jsonApiRequest(
+      refreshTokenUrl(config, refreshTransaction, refreshToken),
+      body
+    );
   };
 
   const getUser = (): Object | undefined => {

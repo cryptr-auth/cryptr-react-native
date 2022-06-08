@@ -159,18 +159,20 @@ export const sloAfterRevokeTokenUrl = (
 
 export const refreshTokenUrl = (
   config: PreparedCryptrConfig,
-  refreshTransaction: Transaction
+  refreshTransaction: Transaction,
+  refreshToken: string
 ): string => {
   const { cryptr_base_url, tenant_domain, client_id } = config;
   const {
     pkce: { state: pkceState },
   } = refreshTransaction;
+  let domain = organizationDomain(refreshToken) || tenant_domain;
   let urlParts = [
     cryptr_base_url,
     'api',
     'v1',
     'tenants',
-    tenant_domain,
+    domain,
     client_id,
     pkceState,
     'oauth',
