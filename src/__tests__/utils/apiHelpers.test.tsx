@@ -96,6 +96,23 @@ describe('apiHelpers#tokenUrl/3', () => {
       `https://cryptr.authent.me/api/v1/tenants/shark-academy/123-aze/${transaction.pkce.state}/oauth/signup/client/${authorization.authorization_id}/token`
     );
   });
+
+  it('should return signup token url using authorization organization', () => {
+    const transaction = new Transaction(
+      config.default_redirect_uri,
+      Sign.SIGNUP
+    );
+
+    let url = tokenUrl(
+      config,
+      { organization_domain: 'misapret', ...authorization },
+      transaction
+    );
+
+    expect(url).toEqual(
+      `https://cryptr.authent.me/api/v1/tenants/misapret/123-aze/${transaction.pkce.state}/oauth/signup/client/${authorization.authorization_id}/token`
+    );
+  });
 });
 
 describe('apiHelpers#ssoSignUrl/3', () => {
