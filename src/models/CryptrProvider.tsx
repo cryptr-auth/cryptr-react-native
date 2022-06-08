@@ -1,5 +1,4 @@
 import React, { useEffect, useReducer, useState } from 'react';
-import jwtDecode from 'jwt-decode';
 import CryptrContext from './CryptrContext';
 import CryptrReducer from './CryptrReducer';
 import initialCryptrState from './initialCryptrState';
@@ -26,11 +25,13 @@ import Cryptr from './Cryptr';
 import {
   extractParamsFromUri,
   logOutBody,
+  organizationDomain,
   prepareConfig,
   refreshBody,
   tokensBody,
 } from '../utils/helpers';
 import { DeviceEventEmitter, Platform } from 'react-native';
+import Jwt from '../utils/jwt';
 
 const CryptrProvider: React.FC<ProviderProps> = ({
   children,
@@ -95,7 +96,10 @@ const CryptrProvider: React.FC<ProviderProps> = ({
   }, [config]);
 
   const handleNewTokens = (json: any, callback?: (data: any) => any) => {
-    json.refresh_token &&
+    if (json.refresh_token) {
+      const organization_domain = organizationDomain(json.refresh_token);
+      Jwt.validatesAccessToken(json.access_token, config, organization_domain);
+      Jwt.validatesIdToken(json.id_token, config, organization_domain);
       Cryptr.setRefresh(
         json.refresh_token,
         (_data: any) => {},
@@ -105,6 +109,7 @@ const CryptrProvider: React.FC<ProviderProps> = ({
           } catch (_error) {}
         }
       );
+    }
     const actionType = json.access_token
       ? CryptrReducerActionKind.AUTHENTICATED
       : CryptrReducerActionKind.UNAUTHENTICATED;
@@ -261,6 +266,13 @@ const CryptrProvider: React.FC<ProviderProps> = ({
       errorCallback && errorCallback(json);
     } else {
       if (json.refresh_token) {
+        const organization_domain = organizationDomain(json.refresh_token);
+        Jwt.validatesAccessToken(
+          json.access_token,
+          config,
+          organization_domain
+        );
+        Jwt.validatesIdToken(json.id_token, config, organization_domain);
         Cryptr.setRefresh(
           json.refresh_token,
           (_data: any) => {},
@@ -322,7 +334,7 @@ const CryptrProvider: React.FC<ProviderProps> = ({
 
   const getUser = (): CryptrUser | undefined => {
     if (state.idToken) {
-      return jwtDecode(state.idToken);
+      return Jwt.body(state.idToken) as CryptrUser;
     }
     return undefined;
   };
