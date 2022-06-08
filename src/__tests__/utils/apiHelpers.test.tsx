@@ -220,7 +220,7 @@ describe('apiHelpers#refreshTokenUrl/2', () => {
   });
 });
 
-describe('aiHelpers#ssoGatewayUrl', () => {
+describe('apiHelpers#ssoGatewayUrl', () => {
   const config: PreparedCryptrConfig = {
     cryptr_base_url: 'https://cryptr.authent.me',
     tenant_domain: 'shark-academy',
@@ -253,7 +253,7 @@ describe('aiHelpers#ssoGatewayUrl', () => {
     );
   });
 
-  it('should returns deicated standard url', () => {
+  it('should returns dedicated standard url', () => {
     let url = ssoGatewayUrl({ ...config, dedicated_server: true }, transaction);
     let searchParams = new URLSearchParams(url);
 
