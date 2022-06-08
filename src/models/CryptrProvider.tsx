@@ -229,7 +229,7 @@ const CryptrProvider: React.FC<ProviderProps> = ({
         if (body) {
           setLoading();
 
-          jsonApiRequest(revokeTokenUrl(config), body)
+          jsonApiRequest(revokeTokenUrl(config, refreshToken), body)
             .then((resp) => resp.json())
             .then((json) => {
               handleLogOut(json, successCallback);

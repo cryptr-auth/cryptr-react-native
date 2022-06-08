@@ -112,13 +112,19 @@ export const ssoGatewayUrl = (
   }
   return urlBuilder([cryptr_base_url], queryParams);
 };
+
+export const revokeTokenUrl = (
+  config: PreparedCryptrConfig,
+  refreshToken: string
+): string => {
   const { cryptr_base_url, tenant_domain, client_id } = config;
+  let domain = organizationDomain(refreshToken) || tenant_domain;
   let urlParts = [
     cryptr_base_url,
     'api',
     'v1',
     'tenants',
-    tenant_domain,
+    domain,
     client_id,
     'oauth',
     'token',
