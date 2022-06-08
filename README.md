@@ -97,6 +97,7 @@ const config: CryptrConfig = {
   default_redirect_uri: 'cryptr://YOUR_TENANT',
   region: Region.EU,
   cryptr_base_url: 'YOUR_SERVER_URL',
+  dedicated_server: true, // if you have a dedicated server on cryptr
 };
 ```
 
@@ -200,6 +201,22 @@ const { signinWithSSO } = useCryptr()
 signinWithSSO(idpID: string, successCallback?: (data: any) => any, errorCallback?: (data: any) => any)
 ```
 
+#### signinWithSSOGateway
+
+Hook action to sign in the user using Cryptr Gateway when you don't know what is the precise ID used by your end user. You can precise a subset of IDP_ID that user will be able to consume, if none end-user will be able to find his by email or organziation_domain.
+
+When you set one string for `idpId` behavior is same as `signinWithSSO`
+
+:warning: requires a proper setup of you different organization
+
+
+```js
+const { signinWithSSOGateway } = useCryptr()
+
+// [...]
+signinWithSSOGateway(idpID?: string | string[], successCallback?: (data: any) => any, errorCallback?: (data: any) => any)
+```
+
 #### refreshTokens
 
 Hook action to refresh tokens to new ones.
@@ -251,5 +268,7 @@ const { isLoading } = useCryptr()
 This SDK also includes Component to simplify your integration.
 
 - `SsoSigInButton` to login using SSO (hides when session is already active [`autoHide={false}` to disable])
+
+- `SsoGatewayButton` to login using SSO Gateway (hides when session is already active [`autoHide={false}` to disable])
 - `LogOutButton` to logout user (hides when no session is active [`autoHide={false}` to disable])
 - `RefreshButton` to get new tokens (hides when session is already active [`autoHide={false}` to disable])

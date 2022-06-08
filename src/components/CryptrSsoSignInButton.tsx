@@ -18,6 +18,7 @@ type SsoSignInProps = {
   buttonTextStyle?: StyleProp<TextStyle>;
   autoHide?: boolean;
   successCallback?: (data: any) => any;
+  errorCallback?: (data: any) => any;
   children?: JSX.Element;
 };
 
@@ -28,6 +29,7 @@ const CryptrSsoSignInButton = ({
   buttonTextStyle,
   children,
   successCallback,
+  errorCallback,
   autoHide = true,
 }: SsoSignInProps): JSX.Element => {
   if (idpId === '') {
@@ -45,7 +47,7 @@ const CryptrSsoSignInButton = ({
   };
 
   const ssoClick = () => {
-    signinWithSSO(idpId, successCallback);
+    signinWithSSO(idpId, successCallback, errorCallback);
   };
 
   if (

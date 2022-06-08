@@ -11,11 +11,13 @@ import {
   revokeTokenUrl,
   sloAfterRevokeTokenUrl,
   ssoSignUrl,
+  ssoGatewayUrl,
   tokenUrl,
 } from '../utils/apiHelpers';
 import { CryptrReducerActionKind, Sign } from '../utils/enums';
 import type {
   CryptrActionError,
+  CryptrUser,
   PreparedCryptrConfig,
   ProviderProps,
   SecuredNavigationEvent,
@@ -161,6 +163,24 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     );
   };
 
+  const signInWithSSOGateway = (
+    idpId?: string | string[],
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
+  ) => {
+    let ssoTransaction = new Transaction(config.default_redirect_uri, Sign.SSO);
+    let ssoGatewayURL = ssoGatewayUrl(config, ssoTransaction, idpId);
+    setLoading();
+    Cryptr.startSecuredView(
+      ssoGatewayURL,
+      handleRedirectCalback(ssoTransaction, successCallback),
+      (error: any) => {
+        setError(error);
+        errorCallback && errorCallback(error);
+      }
+    );
+  };
+
   const handleLogOut = (
     json: any,
     callback?: (data: any) => any,
@@ -210,7 +230,7 @@ const CryptrProvider: React.FC<ProviderProps> = ({
         if (body) {
           setLoading();
 
-          jsonApiRequest(revokeTokenUrl(config), body)
+          jsonApiRequest(revokeTokenUrl(config, refreshToken), body)
             .then((resp) => resp.json())
             .then((json) => {
               handleLogOut(json, successCallback);
@@ -230,23 +250,31 @@ const CryptrProvider: React.FC<ProviderProps> = ({
 
   const handleRefreshResponse = (
     json: any,
-    successCallback?: (data: any) => any
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
   ) => {
-    if (json.refresh_token) {
-      Cryptr.setRefresh(
-        json.refresh_token,
-        (_data: any) => {},
-        (error: any) => {
-          setError(error);
-        }
-      );
-    }
-    if (json.access_token) {
-      setAuthenticated(json);
+    if (json.error) {
+      dispatch({
+        type: CryptrReducerActionKind.UNAUTHENTICATED,
+        payload: json,
+      });
+      errorCallback && errorCallback(json);
     } else {
+      if (json.refresh_token) {
+        Cryptr.setRefresh(
+          json.refresh_token,
+          (_data: any) => {},
+          (error: any) => {
+            setError(error);
+          }
+        );
+      }
+      if (json.access_token) {
+        setAuthenticated(json);
+      }
       setUnloading();
+      successCallback && successCallback(json);
     }
-    successCallback && successCallback(json);
   };
 
   const refreshTokens = (
@@ -260,7 +288,7 @@ const CryptrProvider: React.FC<ProviderProps> = ({
           getTokensByRefresh(refreshvalue)
             .then((resp) => resp.json())
             .then((json) => {
-              handleRefreshResponse(json, successCallback);
+              handleRefreshResponse(json, successCallback, errorCallback);
             })
             .catch((error) => {
               setError(error);
@@ -286,10 +314,13 @@ const CryptrProvider: React.FC<ProviderProps> = ({
       Sign.REFRESH
     );
     let body = refreshBody(refreshToken, refreshTransaction, config);
-    return jsonApiRequest(refreshTokenUrl(config, refreshTransaction), body);
+    return jsonApiRequest(
+      refreshTokenUrl(config, refreshTransaction, refreshToken),
+      body
+    );
   };
 
-  const getUser = (): Object | undefined => {
+  const getUser = (): CryptrUser | undefined => {
     if (state.idToken) {
       return jwtDecode(state.idToken);
     }
@@ -315,6 +346,11 @@ const CryptrProvider: React.FC<ProviderProps> = ({
           successCallback?: (data: any) => any,
           errorCallback?: (data: any) => any
         ) => signInWithSSO(idpId, successCallback, errorCallback),
+        signinWithSSOGateway: (
+          idpId?: string | string[],
+          successCallback?: (data: any) => any,
+          errorCallback?: (data: any) => any
+        ) => signInWithSSOGateway(idpId, successCallback, errorCallback),
         logOut: (
           successCallback?: (data: any) => any,
           errorCallback?: (error: any) => any

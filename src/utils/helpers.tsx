@@ -27,6 +27,7 @@ export const prepareConfig = (
     cryptr_base_url: finalCryptrBaseUrl(options),
     default_locale: options.default_locale || deviceCryptrLocale(),
     default_redirect_uri: options.default_redirect_uri,
+    dedicated_server: options.dedicated_server || false,
   };
 };
 
@@ -106,4 +107,13 @@ export const deviceCryptrLocale = (): Locale => {
   let dLocale: Locale =
     (Locale[lang as keyof typeof Locale] as Locale) || Locale.EN;
   return dLocale;
+};
+
+export const organizationDomain = (
+  refreshToken: string
+): string | undefined => {
+  if (refreshToken.includes('.')) {
+    return refreshToken.split('.')[0];
+  }
+  return undefined;
 };
