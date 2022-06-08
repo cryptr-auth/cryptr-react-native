@@ -57,3 +57,31 @@ export interface IHash<T> {
 export interface SecuredNavigationEvent {
   eventType: string;
 }
+
+type MetadataType = {
+  [key: string]: any;
+};
+
+export type CryptrUser = {
+  application_metadata?: MetadataType;
+  at_hash?: string;
+  aud?: string;
+  c_hash?: string;
+  cid?: string;
+  dbs?: string;
+  email: string;
+  exp: number;
+  family_name?: string;
+  given_name?: string;
+  iat: number;
+  iss: string;
+  jti?: string;
+  jtt: string;
+  nonce: string;
+  resource_owner_metadata?: MetadataType;
+  s_hash?: string;
+  scp?: string[];
+  sub: string;
+  tnt: string;
+  ver: number;
+};

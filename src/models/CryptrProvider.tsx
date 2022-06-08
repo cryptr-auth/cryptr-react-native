@@ -17,6 +17,7 @@ import {
 import { CryptrReducerActionKind, Sign } from '../utils/enums';
 import type {
   CryptrActionError,
+  CryptrUser,
   PreparedCryptrConfig,
   ProviderProps,
   SecuredNavigationEvent,
@@ -319,7 +320,7 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     );
   };
 
-  const getUser = (): Object | undefined => {
+  const getUser = (): CryptrUser | undefined => {
     if (state.idToken) {
       return jwtDecode(state.idToken);
     }
