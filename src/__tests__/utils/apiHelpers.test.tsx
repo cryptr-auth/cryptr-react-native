@@ -144,11 +144,19 @@ describe('apiHelpers#revokeTokenUrl/1', () => {
     default_redirect_uri: 'cryptr://app',
   };
 
-  it('should return signin token url if sample transaction', () => {
-    let url = revokeTokenUrl(config);
+  it('should return revoke token url if sample transaction and sample refresh', () => {
+    let url = revokeTokenUrl(config, 'any_refresh');
 
     expect(url).toEqual(
       'https://cryptr.authent.me/api/v1/tenants/shark-academy/123-aze/oauth/token/revoke'
+    );
+  });
+
+  it('should return revoke token url with organization pattern present in refresh', () => {
+    let url = revokeTokenUrl(config, 'misapret.any_refresh');
+
+    expect(url).toEqual(
+      'https://cryptr.authent.me/api/v1/tenants/misapret/123-aze/oauth/token/revoke'
     );
   });
 });
