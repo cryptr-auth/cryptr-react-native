@@ -200,4 +200,18 @@ describe('apiHelpers#refreshTokenUrl/2', () => {
       `https://cryptr.authent.me/api/v1/tenants/shark-academy/123-aze/${refreshTransaction.pkce.state}/oauth/client/token`
     );
   });
+
+  it('should return refresh token url if organization in refresh', () => {
+    let url = refreshTokenUrl(
+      config,
+      refreshTransaction,
+      'misapret.any_refresh'
+    );
+
+    expect(url).toEqual(
+      `https://cryptr.authent.me/api/v1/tenants/misapret/123-aze/${refreshTransaction.pkce.state}/oauth/client/token`
+    );
+  });
+});
+
 });
