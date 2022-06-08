@@ -29,13 +29,13 @@ export const tokenUrl = (
     signType,
     pkce: { state: pkceState },
   } = transaction;
-  const { authorization_id } = authorization;
+  const { authorization_id, organization_domain } = authorization;
   let urlParts = [
     config.cryptr_base_url,
     'api',
     'v1',
     'tenants',
-    config.tenant_domain,
+    organization_domain || config.tenant_domain,
     config.client_id,
     pkceState,
     'oauth',
