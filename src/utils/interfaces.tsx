@@ -58,7 +58,7 @@ export interface SecuredNavigationEvent {
   eventType: string;
 }
 
-type MetadataType = {
+export type MetadataType = {
   [key: string]: any;
 };
 
