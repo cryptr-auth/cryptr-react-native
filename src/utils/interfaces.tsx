@@ -62,6 +62,12 @@ type MetadataType = {
   [key: string]: any;
 };
 
+export type JwtHeaderType = {
+  alg: string;
+  typ: string;
+  [key: string]: any;
+};
+
 export type CryptrUser = {
   application_metadata?: MetadataType;
   at_hash?: string;

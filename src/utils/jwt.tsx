@@ -1,6 +1,6 @@
 import jwtDecode from 'jwt-decode';
 import { JWT, RS256 } from './constants';
-import type { PreparedCryptrConfig } from './interfaces';
+import type { JwtHeaderType, PreparedCryptrConfig } from './interfaces';
 
 const COMMON_FIELDS: Array<string> = [
   'iss',
@@ -58,7 +58,7 @@ const ACCESS_FIELDS = COMMON_FIELDS;
 
 const ID_FIELDS = ['at_hash', 'c_hash', 'nonce'].concat(COMMON_FIELDS);
 
-const validatesFieldsExist = (
+export const validatesFieldsExist = (
   jwtBody: any,
   fields: string[]
 ): void | boolean => {
@@ -71,10 +71,14 @@ const validatesFieldsExist = (
   return true;
 };
 
-const validatesHeader = (token: any): void | true => {
-  const header: { alg: string; typ: string } = jwtDecode(token, {
+const validatesHeaderFromToken = (token: any): void | true => {
+  const header: JwtHeaderType = jwtDecode(token, {
     header: true,
   });
+  return validatesHeader(header);
+};
+
+export const validatesHeader = (header: JwtHeaderType): void | true => {
   if (header.typ !== JWT) {
     throw new Error('The token must be a JWT');
   }
@@ -84,13 +88,13 @@ const validatesHeader = (token: any): void | true => {
   }
 
   if (!header.hasOwnProperty('kid')) {
-    throw new Error('Token need a kid (key identifier) in header');
+    throw new Error('The token need a kid (key identifier) in header');
   }
 
   return true;
 };
 
-const validatesTimestamps = (jwtBody: any): void | true => {
+export const validatesTimestamps = (jwtBody: any): void | true => {
   if (!Number.isInteger(jwtBody.exp)) {
     throw new Error('Expiration Time (exp) claim must be a present number');
   }
@@ -101,7 +105,7 @@ const validatesTimestamps = (jwtBody: any): void | true => {
   return true;
 };
 
-const validatesAudience = (
+export const validatesAudience = (
   jwtBody: any,
   config: PreparedCryptrConfig
 ): void | boolean => {
@@ -113,7 +117,7 @@ const validatesAudience = (
   return true;
 };
 
-const validatesIssuer = (
+export const validatesIssuer = (
   jwtBody: any,
   config: PreparedCryptrConfig,
   organization_domain?: string
@@ -133,9 +137,14 @@ const validatesIssuer = (
   return true;
 };
 
-const validatesClient = (jwtBody: any, config: PreparedCryptrConfig): void | true => {
+export const validatesClient = (
+  jwtBody: any,
+  config: PreparedCryptrConfig
+): void | true => {
   if (config.client_id !== jwtBody.cid) {
-    throw new Error(`Client id (cid) ${jwtBody.cid} claim is not compliant with ${config.client_id} from config`);
+    throw new Error(
+      `Client id (cid) ${jwtBody.cid} claim is not compliant with ${config.client_id} from config`
+    );
   }
   return true;
 };
@@ -160,14 +169,14 @@ const validatesJwtBody = (
   return (
     validatesTimestamps(jwtBody) &&
     validatesAudience(jwtBody, config) &&
-    // validatesIssuer(jwtBody, config, organization_domain) &&
+    validatesIssuer(jwtBody, config, organization_domain) &&
     validatesClient(jwtBody, config) &&
     validatesExpiration(jwtBody)
   );
 };
 
 const Jwt = {
-  body: (token: string): object => {
+  body: (token: string): object | never => {
     return jwtDecode(token);
   },
   validatesAccessToken: (
@@ -176,7 +185,7 @@ const Jwt = {
     organization_domain?: string
   ): boolean => {
     const jwtBody = Jwt.body(accessToken);
-    validatesHeader(accessToken);
+    validatesHeaderFromToken(accessToken);
     validatesJwtBody(jwtBody, config, organization_domain);
     validatesFieldsExist(jwtBody, ACCESS_FIELDS);
 
@@ -188,7 +197,7 @@ const Jwt = {
     organization_domain?: string
   ): boolean => {
     const jwtBody = Jwt.body(idToken);
-    validatesHeader(idToken);
+    validatesHeaderFromToken(idToken);
     validatesJwtBody(jwtBody, config, organization_domain);
     validatesFieldsExist(jwtBody, ID_FIELDS);
 
