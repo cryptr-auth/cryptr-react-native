@@ -1,6 +1,8 @@
 // URL Builders
 
 import type Transaction from 'src/models/Transaction';
+import { Locale } from './enums';
+import { organizationDomain } from './helpers';
 import type { PreparedCryptrConfig } from './interfaces';
 
 type QueryParam<T, K> = [T, K];
@@ -29,13 +31,14 @@ export const tokenUrl = (
     signType,
     pkce: { state: pkceState },
   } = transaction;
-  const { authorization_id } = authorization;
+  const { authorization_id, organization_domain } = authorization;
+  let domain = organization_domain || config.tenant_domain;
   let urlParts = [
     config.cryptr_base_url,
     'api',
     'v1',
     'tenants',
-    config.tenant_domain,
+    domain,
     config.client_id,
     pkceState,
     'oauth',
@@ -75,14 +78,58 @@ export const ssoSignUrl = (
   return urlBuilder(urlParts, queryParams);
 };
 
-export const revokeTokenUrl = (config: PreparedCryptrConfig): string => {
+export const ssoGatewayUrl = (
+  config: PreparedCryptrConfig,
+  ssoTransaction: Transaction,
+  idpId?: string | string[]
+) => {
+  const { cryptr_base_url, client_id, dedicated_server, tenant_domain } =
+    config;
+  const cryptrBaseUrl = dedicated_server
+    ? cryptr_base_url
+    : [cryptr_base_url, 't', tenant_domain, ''].join('/');
+  const {
+    redirectUri,
+    scope,
+    pkce: { state: clientState, codeChallenge, codeChallengeMethod },
+  } = ssoTransaction;
+  const locale = ssoTransaction.locale || config.default_locale || Locale.EN;
+  let queryParams = [
+    ['client_id', client_id] as QueryParam<string, string>,
+    ['locale', locale] as QueryParam<string, string>,
+    ['client_state', clientState] as QueryParam<string, string>,
+    ['scope', scope] as QueryParam<string, string>,
+    ['redirect_uri', redirectUri] as QueryParam<string, string>,
+    ['code_challenge', codeChallenge] as QueryParam<string, string>,
+    ['code_challenge_method', codeChallengeMethod] as QueryParam<
+      string,
+      string
+    >,
+  ];
+  if (idpId) {
+    if (typeof idpId === 'string') {
+      queryParams.push(['idp_id', idpId] as QueryParam<string, string>);
+    } else {
+      idpId.forEach((idp_id) => {
+        queryParams.push(['idp_ids[]', idp_id] as QueryParam<string, string>);
+      });
+    }
+  }
+  return urlBuilder([cryptrBaseUrl], queryParams);
+};
+
+export const revokeTokenUrl = (
+  config: PreparedCryptrConfig,
+  refreshToken: string
+): string => {
   const { cryptr_base_url, tenant_domain, client_id } = config;
+  let domain = organizationDomain(refreshToken) || tenant_domain;
   let urlParts = [
     cryptr_base_url,
     'api',
     'v1',
     'tenants',
-    tenant_domain,
+    domain,
     client_id,
     'oauth',
     'token',
@@ -117,18 +164,20 @@ export const sloAfterRevokeTokenUrl = (
 
 export const refreshTokenUrl = (
   config: PreparedCryptrConfig,
-  refreshTransaction: Transaction
+  refreshTransaction: Transaction,
+  refreshToken: string
 ): string => {
   const { cryptr_base_url, tenant_domain, client_id } = config;
   const {
     pkce: { state: pkceState },
   } = refreshTransaction;
+  let domain = organizationDomain(refreshToken) || tenant_domain;
   let urlParts = [
     cryptr_base_url,
     'api',
     'v1',
     'tenants',
-    tenant_domain,
+    domain,
     client_id,
     pkceState,
     'oauth',

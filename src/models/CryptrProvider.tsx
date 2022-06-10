@@ -1,5 +1,4 @@
 import React, { useEffect, useReducer, useState } from 'react';
-import jwtDecode from 'jwt-decode';
 import CryptrContext from './CryptrContext';
 import CryptrReducer from './CryptrReducer';
 import initialCryptrState from './initialCryptrState';
@@ -11,11 +10,13 @@ import {
   revokeTokenUrl,
   sloAfterRevokeTokenUrl,
   ssoSignUrl,
+  ssoGatewayUrl,
   tokenUrl,
 } from '../utils/apiHelpers';
 import { CryptrReducerActionKind, Sign } from '../utils/enums';
 import type {
   CryptrActionError,
+  CryptrUser,
   PreparedCryptrConfig,
   ProviderProps,
   SecuredNavigationEvent,
@@ -24,11 +25,13 @@ import Cryptr from './Cryptr';
 import {
   extractParamsFromUri,
   logOutBody,
+  organizationDomain,
   prepareConfig,
   refreshBody,
   tokensBody,
 } from '../utils/helpers';
 import { DeviceEventEmitter, Platform } from 'react-native';
+import Jwt from '../utils/jwt';
 
 const CryptrProvider: React.FC<ProviderProps> = ({
   children,
@@ -93,7 +96,10 @@ const CryptrProvider: React.FC<ProviderProps> = ({
   }, [config]);
 
   const handleNewTokens = (json: any, callback?: (data: any) => any) => {
-    json.refresh_token &&
+    if (json.refresh_token) {
+      const organization_domain = organizationDomain(json.refresh_token);
+      Jwt.validatesAccessToken(json.access_token, config, organization_domain);
+      Jwt.validatesIdToken(json.id_token, config, organization_domain);
       Cryptr.setRefresh(
         json.refresh_token,
         (_data: any) => {},
@@ -103,6 +109,7 @@ const CryptrProvider: React.FC<ProviderProps> = ({
           } catch (_error) {}
         }
       );
+    }
     const actionType = json.access_token
       ? CryptrReducerActionKind.AUTHENTICATED
       : CryptrReducerActionKind.UNAUTHENTICATED;
@@ -161,6 +168,24 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     );
   };
 
+  const signInWithSSOGateway = (
+    idpId?: string | string[],
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
+  ) => {
+    let ssoTransaction = new Transaction(config.default_redirect_uri, Sign.SSO);
+    let ssoGatewayURL = ssoGatewayUrl(config, ssoTransaction, idpId);
+    setLoading();
+    Cryptr.startSecuredView(
+      ssoGatewayURL,
+      handleRedirectCalback(ssoTransaction, successCallback),
+      (error: any) => {
+        setError(error);
+        errorCallback && errorCallback(error);
+      }
+    );
+  };
+
   const handleLogOut = (
     json: any,
     callback?: (data: any) => any,
@@ -210,7 +235,7 @@ const CryptrProvider: React.FC<ProviderProps> = ({
         if (body) {
           setLoading();
 
-          jsonApiRequest(revokeTokenUrl(config), body)
+          jsonApiRequest(revokeTokenUrl(config, refreshToken), body)
             .then((resp) => resp.json())
             .then((json) => {
               handleLogOut(json, successCallback);
@@ -230,23 +255,38 @@ const CryptrProvider: React.FC<ProviderProps> = ({
 
   const handleRefreshResponse = (
     json: any,
-    successCallback?: (data: any) => any
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
   ) => {
-    if (json.refresh_token) {
-      Cryptr.setRefresh(
-        json.refresh_token,
-        (_data: any) => {},
-        (error: any) => {
-          setError(error);
-        }
-      );
-    }
-    if (json.access_token) {
-      setAuthenticated(json);
+    if (json.error) {
+      dispatch({
+        type: CryptrReducerActionKind.UNAUTHENTICATED,
+        payload: json,
+      });
+      errorCallback && errorCallback(json);
     } else {
+      if (json.refresh_token) {
+        const organization_domain = organizationDomain(json.refresh_token);
+        Jwt.validatesAccessToken(
+          json.access_token,
+          config,
+          organization_domain
+        );
+        Jwt.validatesIdToken(json.id_token, config, organization_domain);
+        Cryptr.setRefresh(
+          json.refresh_token,
+          (_data: any) => {},
+          (error: any) => {
+            setError(error);
+          }
+        );
+      }
+      if (json.access_token) {
+        setAuthenticated(json);
+      }
       setUnloading();
+      successCallback && successCallback(json);
     }
-    successCallback && successCallback(json);
   };
 
   const refreshTokens = (
@@ -260,7 +300,7 @@ const CryptrProvider: React.FC<ProviderProps> = ({
           getTokensByRefresh(refreshvalue)
             .then((resp) => resp.json())
             .then((json) => {
-              handleRefreshResponse(json, successCallback);
+              handleRefreshResponse(json, successCallback, errorCallback);
             })
             .catch((error) => {
               setError(error);
@@ -286,12 +326,15 @@ const CryptrProvider: React.FC<ProviderProps> = ({
       Sign.REFRESH
     );
     let body = refreshBody(refreshToken, refreshTransaction, config);
-    return jsonApiRequest(refreshTokenUrl(config, refreshTransaction), body);
+    return jsonApiRequest(
+      refreshTokenUrl(config, refreshTransaction, refreshToken),
+      body
+    );
   };
 
-  const getUser = (): Object | undefined => {
+  const getUser = (): CryptrUser | undefined => {
     if (state.idToken) {
-      return jwtDecode(state.idToken);
+      return Jwt.body(state.idToken) as CryptrUser;
     }
     return undefined;
   };
@@ -315,6 +358,11 @@ const CryptrProvider: React.FC<ProviderProps> = ({
           successCallback?: (data: any) => any,
           errorCallback?: (data: any) => any
         ) => signInWithSSO(idpId, successCallback, errorCallback),
+        signinWithSSOGateway: (
+          idpId?: string | string[],
+          successCallback?: (data: any) => any,
+          errorCallback?: (data: any) => any
+        ) => signInWithSSOGateway(idpId, successCallback, errorCallback),
         logOut: (
           successCallback?: (data: any) => any,
           errorCallback?: (error: any) => any
