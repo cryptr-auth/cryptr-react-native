@@ -4,6 +4,7 @@ React Native SDK for Cryptr Authentication through SSO
 
 ## Summary
 
+  - [Expo](#expo)
   - [Prerequisites](#prerequisites)
     - [Android](#android)
     - [iOS](#ios)
@@ -15,6 +16,10 @@ React Native SDK for Cryptr Authentication through SSO
     - [Basis](#basis)
     - [Hooks](#hooks)
     - [Components](#components)
+
+## Expo integration
+
+:warning: this is not compatible with Expo Go (neither `link`) and requires a run (`expo run`)
 
 ## Prerequisites
 
@@ -56,7 +61,7 @@ npm install @cryptr/cryptr-react-native
 
 **Check your minSdkVersion**
 
-In `android/build.gradle` check that the version is `23`
+In `android/build.gradle` check that the version is `23` or greater
 
 ```
 //android/build.gradle
@@ -65,7 +70,7 @@ minSdkVersion = 23
 
 **Update your manifestPlaceholders**
 
-In `android/app/build.gradle` setup as follow:
+In `android/app/build.gradle` setup as below. If `manifestPlaceholders` is not present add it with proper values.
 
 ```
 android {
@@ -77,7 +82,7 @@ android {
 }
 ```
 
-The `cryptrDomain` should have the same value in allowed redirect URI for this app on Cryptr.
+The `cryptrDomain` should have the same value in the allowed redirect URI for this app on Cryptr.
 
 You are now good to go.
 
@@ -86,8 +91,7 @@ You are now good to go.
 ### Basis
 
 Cryptr implementation is based on React Context and Provider.
-
-At top level of your React Native App set your configuration you got on first step, as this one:
+At the top level of your React Native App set the configuration you got on the first step, like this one:
 
 ```js
 const config: CryptrConfig = {
@@ -104,22 +108,7 @@ const config: CryptrConfig = {
 Then you can use it into `<CryptrProvider {...config}>`
 
 Example:
-
-```js
-// App.js
-
-const config: CryptrConfig = {/*..*/};
-
-const App = () => {
-  return (
-    <CryptrProvider {...config}>
-    // Cryptr Auth Session context
-    </CryptrProvider>
-  )
-}
-```
-
-Inside this Provider you can handle Cryptr Authentication using our Hooks and/or components.
+Inside this Provider, you can handle Cryptr Authentication using our Hooks and/or components.
 
 ### Hooks
 
@@ -203,11 +192,11 @@ signinWithSSO(idpID: string, successCallback?: (data: any) => any, errorCallback
 
 #### signinWithSSOGateway
 
-Hook action to sign in the user using Cryptr Gateway when you don't know what is the precise ID used by your end user. You can precise a subset of IDP_ID that user will be able to consume, if none end-user will be able to find his by email or organziation_domain.
+Hook action to sign in the user using Cryptr Gateway when you don't know what is the precise ID used by your end user. You can precise a subset of IDP_ID that the user will be able to consume if none is provided, the end-user will be able to find his by email or organziation_domain.
 
-When you set one string for `idpId` behavior is same as `signinWithSSO`
+When you set one string for `idpId` behavior is the same as `signinWithSSO``
 
-:warning: requires a proper setup of you different organization
+:warning: requires a proper setup of your different organizations
 
 
 ```js
@@ -230,7 +219,7 @@ refreshTokens(callback?: (data: any) => any)
 
 #### logOut
 
-Hook action to log out user.
+Hook action to log out the user.
 
 
 ```js
@@ -255,7 +244,7 @@ const { error } = useCryptr()
 
 #### isLoading
 
-Hook to inform you about that a Cryptr process is in progress.
+Hook to inform you that a Cryptr process is in progress.
 
 The return type is a <u>**boolean**</u>
 
@@ -265,7 +254,7 @@ const { isLoading } = useCryptr()
 
 ### Components
 
-This SDK also includes Component to simplify your integration.
+This SDK also includes Components to simplify your integration.
 
 - `SsoSigInButton` to login using SSO (hides when session is already active [`autoHide={false}` to disable])
 
