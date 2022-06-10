@@ -20,9 +20,9 @@ const COMMON_FIELDS: Array<string> = [
   +-----+--------------+--------+-------------------------------------+
   | Key |  Name        | Type   |  Example                            |
   +-----+--------------+--------+-------------------------------------+
-  | iss | Issuer       | string | "misapret.cryptr.com"               |
+  | iss | Issuer       | string | "shark-academy.cryptr.com"          |
   | sub | EndUser      | uuid   | uuid                                |
-  | aud | Audience     | string | "misapret.com"                      |
+  | aud | Audience     | string | "shark-academy.com"                 |
   | exp | Expiration   | DtTime | "2039-01-01T00:00:00+00:00"         |
   | nbf | Not Before   | DtTime | "2038-04-01T00:00:00+00:00"         |
   | iat | Issued At    | DtTime | "2038-03-17T00:00:00+00:00"         |
@@ -30,7 +30,7 @@ const COMMON_FIELDS: Array<string> = [
   | jti | Token UUID   | uuid   | Access id                           |
   | jtt | JWT Type     | string | "access"                            |
   | scp | Scope        | array  | "openid email"                      |
-  | tnt | Tenant       | string | "misapret"                          |
+  | tnt | Tenant       | string | "shark-academy"                     |
   +-----+--------------+--------+-------------------------------------+
 */
 
@@ -40,9 +40,9 @@ const ACCESS_FIELDS = COMMON_FIELDS;
   +-----------+--------------+--------+-----------------------------------------+
   | Key       | Name         | Type   | Example                                 |
   +-----------+--------------+--------+-----------------------------------------+
-  | iss       | Issuer       | string | "misapret.cryptr.com" tenant domain url |
+  | iss       | Issuer       | string | "shark-academy.cryptr.com" domain url   |
   | sub       | Subject      | uuid   |       can be the end user id            |
-  | aud       | Audience     | string |       "enchere.misapret.com"            |
+  | aud       | Audience     | string |       "front.shark-academy.com"         |
   | exp       | Expiration   | DtTime | :"2039-01-01T00:00:00+00:00"            |
   | nbf       | Not Before   | DtTime |  "2038-04-01T00:00:00+00:00"            |
   | iat       | Issued At    | DtTime |  "2038-03-17T00:00:00+00:00"            |
@@ -52,7 +52,7 @@ const ACCESS_FIELDS = COMMON_FIELDS;
   | amr       | AuthMethod   | array  |   "swk" method defined by rfc8176       |
   | nonce     | Nonce        | string |  "nonce: "n-0S6_WzA2Mj"                 |
   | auth_time | Auth Time    | DtTime |  "2038-03-17T00:00:00+00:00"            |
-  | tnt       | tenant       | string |               "misapret"                |
+  | tnt       | tenant       | string |               "shark-academy"           |
   +-----------+--------------+--------+-----------------------------------------+
 */
 
