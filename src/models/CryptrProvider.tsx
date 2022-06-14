@@ -176,7 +176,6 @@ const CryptrProvider: React.FC<ProviderProps> = ({
   ) => {
     let ssoTransaction = new Transaction(config.default_redirect_uri, Sign.SSO);
     let ssoGatewayURL = ssoGatewayUrl(config, ssoTransaction, idpId);
-    console.debug(ssoGatewayURL);
     setLoading();
     Cryptr.startSecuredView(
       ssoGatewayURL,
