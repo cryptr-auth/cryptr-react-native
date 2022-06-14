@@ -106,6 +106,7 @@ describe('helpers#prepareConfig/1', () => {
       cryptr_base_url: 'https://auth.cryptr.eu',
       default_locale: 'en',
       dedicated_server: false,
+      ios_cookieless_session: false,
     });
   });
 
@@ -126,6 +127,7 @@ describe('helpers#prepareConfig/1', () => {
       cryptr_base_url: 'https://shark-academy.authent.me',
       default_locale: 'en',
       dedicated_server: false,
+      ios_cookieless_session: false,
     });
   });
 
@@ -146,6 +148,7 @@ describe('helpers#prepareConfig/1', () => {
       cryptr_base_url: 'https://auth.cryptr.eu',
       default_locale: 'en',
       dedicated_server: false,
+      ios_cookieless_session: false,
     });
   });
 
@@ -166,6 +169,7 @@ describe('helpers#prepareConfig/1', () => {
       cryptr_base_url: 'https://auth.cryptr.us',
       default_locale: 'en',
       dedicated_server: false,
+      ios_cookieless_session: false,
     });
   });
 
@@ -187,6 +191,7 @@ describe('helpers#prepareConfig/1', () => {
       cryptr_base_url: 'https://shark-academy.authent.me',
       default_locale: 'en',
       dedicated_server: false,
+      ios_cookieless_session: false,
     });
   });
 
@@ -207,6 +212,7 @@ describe('helpers#prepareConfig/1', () => {
       cryptr_base_url: 'https://auth.cryptr.eu',
       default_locale: 'fr',
       dedicated_server: false,
+      ios_cookieless_session: false,
     });
   });
 
@@ -228,6 +234,29 @@ describe('helpers#prepareConfig/1', () => {
       cryptr_base_url: 'https://auth.cryptr.eu',
       default_locale: 'fr',
       dedicated_server: true,
+      ios_cookieless_session: false,
+    });
+  });
+
+  it('should returns chosen ios_cookieless_session config if provided', () => {
+    expect(
+      prepareConfig({
+        tenant_domain: 'shark_academy',
+        client_id: 'client_id',
+        audience: 'cryptr://audience',
+        default_redirect_uri: 'cryptr://defaultRedirectUri',
+        default_locale: 'fr',
+        ios_cookieless_session: true,
+      })
+    ).toEqual({
+      tenant_domain: 'shark_academy',
+      client_id: 'client_id',
+      audience: 'cryptr://audience',
+      default_redirect_uri: 'cryptr://defaultRedirectUri',
+      cryptr_base_url: 'https://auth.cryptr.eu',
+      default_locale: 'fr',
+      dedicated_server: false,
+      ios_cookieless_session: true,
     });
   });
 });

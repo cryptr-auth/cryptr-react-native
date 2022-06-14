@@ -37,11 +37,13 @@ export interface CryptrConfig {
   cryptr_base_url?: string;
   telemetry?: boolean;
   dedicated_server?: boolean;
+  ios_cookieless_session?: boolean;
 }
 
 export interface PreparedCryptrConfig extends CryptrConfig {
   cryptr_base_url: string;
   dedicated_server: boolean;
+  ios_cookieless_session: boolean;
 }
 
 export interface ProviderOptions extends CryptrConfig {}

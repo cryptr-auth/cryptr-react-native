@@ -29,6 +29,7 @@ export const prepareConfig = (
     default_locale: options.default_locale || deviceCryptrLocale(),
     default_redirect_uri: options.default_redirect_uri,
     dedicated_server: options.dedicated_server || false,
+    ios_cookieless_session: options.ios_cookieless_session || false,
   };
 };
 
