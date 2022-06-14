@@ -237,10 +237,6 @@ describe('helpers#canProcessSloCode/2', () => {
     expect(canProcessSloCode({ ips: 'cryptr' })).toBeFalsy();
   });
 
-  it('returns false if null slo_code', () => {
-    expect(canProcessSloCode({ ips: 'cryptr' })).toBeFalsy();
-  });
-
   it('returns false if blank_string slo_code', () => {
     expect(canProcessSloCode({ ips: 'cryptr' }, '')).toBeFalsy();
   });
