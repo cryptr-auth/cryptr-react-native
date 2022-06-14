@@ -118,6 +118,7 @@ class CryptrModule(reactContext: ReactApplicationContext) : ReactContextBaseJava
     @ReactMethod(isBlockingSynchronousMethod = true)
     fun startSecuredView(
       uri: String,
+      _no_popup_no_cookie: Bool,
       successCallback: Callback,
       errorCallback: Callback,
     ) {

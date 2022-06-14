@@ -101,6 +101,28 @@ describe('CryptrSsoSignInButton', () => {
       expect.stringMatching(
         'https://auth.cryptr.eu/enterprise/app_sso_idp_id/login'
       ),
+      false,
+      expect.anything(),
+      expect.anything()
+    );
+  });
+
+  it('should start sso process when no_popup_no_cookie is true on press action', () => {
+    const { getByText } = render(
+      <CryptrProvider {...config} no_popup_no_cookie={true}>
+        <CryptrSsoSignInButton idpId="app_sso_idp_id">
+          <Text>Custom idp content</Text>
+        </CryptrSsoSignInButton>
+      </CryptrProvider>
+    );
+    const item = getByText('Custom idp content');
+    const startSecuredViewFn = jest.spyOn(Cryptr, 'startSecuredView');
+    fireEvent.press(item);
+    expect(startSecuredViewFn).toHaveBeenCalledWith(
+      expect.stringMatching(
+        'https://auth.cryptr.eu/enterprise/app_sso_idp_id/login'
+      ),
+      true,
       expect.anything(),
       expect.anything()
     );

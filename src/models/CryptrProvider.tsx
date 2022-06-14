@@ -161,6 +161,7 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     setLoading();
     Cryptr.startSecuredView(
       ssoUrl,
+      config.no_popup_no_cookie,
       handleRedirectCalback(ssoTransaction, successCallback),
       (error: any) => {
         setError(error);
@@ -179,6 +180,7 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     setLoading();
     Cryptr.startSecuredView(
       ssoGatewayURL,
+      config.no_popup_no_cookie,
       handleRedirectCalback(ssoTransaction, successCallback),
       (error: any) => {
         setError(error);
@@ -201,6 +203,7 @@ const CryptrProvider: React.FC<ProviderProps> = ({
             let sloUrl = sloAfterRevokeTokenUrl(config, slo_code);
             Cryptr.startSecuredView(
               sloUrl,
+              config.no_popup_no_cookie,
               (_d: any) => {
                 callback && callback(json);
               },
