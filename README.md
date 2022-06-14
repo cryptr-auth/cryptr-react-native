@@ -110,6 +110,14 @@ Then you can use it into `<CryptrProvider {...config}>`
 Example:
 Inside this Provider, you can handle Cryptr Authentication using our Hooks and/or components.
 
+#### iOS Alert dialog on SSO log in
+
+If you want to avoid the display of the above Alert dialog on iOS. you can add `no_popup_no_cookie: true` in your config.
+
+:warning: With this configuration, even the default browser has registered credentials, end-user will have to type them each type.
+
+
+
 ### Hooks
 
 access to our hooks  like this
