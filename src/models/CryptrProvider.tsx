@@ -23,6 +23,7 @@ import type {
 } from '../utils/interfaces';
 import Cryptr from './Cryptr';
 import {
+  canProcessSloCode,
   extractParamsFromUri,
   logOutBody,
   organizationDomain,
@@ -30,7 +31,7 @@ import {
   refreshBody,
   tokensBody,
 } from '../utils/helpers';
-import { DeviceEventEmitter, Platform } from 'react-native';
+import { DeviceEventEmitter } from 'react-native';
 import Jwt from '../utils/jwt';
 
 const CryptrProvider: React.FC<ProviderProps> = ({
@@ -191,25 +192,23 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     callback?: (data: any) => any,
     errorCallback?: (error: any) => any
   ) => {
-    const { revoked_at, slo_code } = json;
+    const { access_token, revoked_at, slo_code } = json;
     if (revoked_at) {
       setUnAuthenticated();
       Cryptr.removeRefresh(
         (_data: any) => {
-          if (slo_code) {
+          if (canProcessSloCode(Jwt.body(access_token), slo_code)) {
             let sloUrl = sloAfterRevokeTokenUrl(config, slo_code);
-            if (Platform.OS === 'android') {
-              Cryptr.startSecuredView(
-                sloUrl,
-                (_d: any) => {
-                  callback && callback(json);
-                },
-                (error: any) => {
-                  setError(error);
-                  errorCallback && errorCallback(error);
-                }
-              );
-            }
+            Cryptr.startSecuredView(
+              sloUrl,
+              (_d: any) => {
+                callback && callback(json);
+              },
+              (error: any) => {
+                setError(error);
+                errorCallback && errorCallback(error);
+              }
+            );
           } else {
             if (callback) callback(json);
           }

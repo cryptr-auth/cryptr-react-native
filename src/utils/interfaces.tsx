@@ -68,6 +68,10 @@ export type JwtHeaderType = {
   [key: string]: any;
 };
 
+export type JwtBodyObject = {
+  [key: string]: any;
+};
+
 export type CryptrUser = {
   application_metadata?: MetadataType;
   at_hash: string;
@@ -89,5 +93,7 @@ export type CryptrUser = {
   scp: string[];
   sub: string;
   tnt: string;
+  sci?: string;
+  ips?: string;
   ver: number;
 };

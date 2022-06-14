@@ -1,6 +1,10 @@
 import jwtDecode from 'jwt-decode';
 import { JWT, RS256 } from './constants';
-import type { JwtHeaderType, PreparedCryptrConfig } from './interfaces';
+import type {
+  JwtBodyObject,
+  JwtHeaderType,
+  PreparedCryptrConfig,
+} from './interfaces';
 
 const COMMON_FIELDS: Array<string> = [
   'iss',
@@ -176,7 +180,7 @@ const validatesJwtBody = (
 };
 
 const Jwt = {
-  body: (token: string): object | never => {
+  body: (token: string): JwtBodyObject | never => {
     return jwtDecode(token);
   },
   validatesAccessToken: (
