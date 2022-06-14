@@ -93,5 +93,7 @@ export type CryptrUser = {
   scp: string[];
   sub: string;
   tnt: string;
+  sci?: string;
+  ips?: string;
   ver: number;
 };
