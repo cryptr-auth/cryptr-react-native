@@ -18,6 +18,7 @@ describe('helpers#refreshBody/3', () => {
     audience: 'cryptr://app',
     default_redirect_uri: 'cryptr://app',
     dedicated_server: false,
+    no_popup_no_cookie: false,
   };
   const refreshToken = 'shark_academy_po54ze';
   const refreshTransaction = new Transaction(
@@ -41,6 +42,7 @@ describe('helpers#tokensBody/3', () => {
     audience: 'cryptr://app',
     default_redirect_uri: 'cryptr://app',
     dedicated_server: false,
+    no_popup_no_cookie: false,
   };
   const params = { authorization_id: 'auth_id' };
   const transaction = new Transaction(config.default_redirect_uri, Sign.SSO);
@@ -106,7 +108,7 @@ describe('helpers#prepareConfig/1', () => {
       cryptr_base_url: 'https://auth.cryptr.eu',
       default_locale: 'en',
       dedicated_server: false,
-      ios_cookieless_session: false,
+      no_popup_no_cookie: false,
     });
   });
 
@@ -127,7 +129,7 @@ describe('helpers#prepareConfig/1', () => {
       cryptr_base_url: 'https://shark-academy.authent.me',
       default_locale: 'en',
       dedicated_server: false,
-      ios_cookieless_session: false,
+      no_popup_no_cookie: false,
     });
   });
 
@@ -148,7 +150,7 @@ describe('helpers#prepareConfig/1', () => {
       cryptr_base_url: 'https://auth.cryptr.eu',
       default_locale: 'en',
       dedicated_server: false,
-      ios_cookieless_session: false,
+      no_popup_no_cookie: false,
     });
   });
 
@@ -169,7 +171,7 @@ describe('helpers#prepareConfig/1', () => {
       cryptr_base_url: 'https://auth.cryptr.us',
       default_locale: 'en',
       dedicated_server: false,
-      ios_cookieless_session: false,
+      no_popup_no_cookie: false,
     });
   });
 
@@ -191,7 +193,7 @@ describe('helpers#prepareConfig/1', () => {
       cryptr_base_url: 'https://shark-academy.authent.me',
       default_locale: 'en',
       dedicated_server: false,
-      ios_cookieless_session: false,
+      no_popup_no_cookie: false,
     });
   });
 
@@ -212,7 +214,7 @@ describe('helpers#prepareConfig/1', () => {
       cryptr_base_url: 'https://auth.cryptr.eu',
       default_locale: 'fr',
       dedicated_server: false,
-      ios_cookieless_session: false,
+      no_popup_no_cookie: false,
     });
   });
 
@@ -234,11 +236,11 @@ describe('helpers#prepareConfig/1', () => {
       cryptr_base_url: 'https://auth.cryptr.eu',
       default_locale: 'fr',
       dedicated_server: true,
-      ios_cookieless_session: false,
+      no_popup_no_cookie: false,
     });
   });
 
-  it('should returns chosen ios_cookieless_session config if provided', () => {
+  it('should returns chosen no_popup_no_cookie config if provided', () => {
     expect(
       prepareConfig({
         tenant_domain: 'shark_academy',
@@ -246,7 +248,7 @@ describe('helpers#prepareConfig/1', () => {
         audience: 'cryptr://audience',
         default_redirect_uri: 'cryptr://defaultRedirectUri',
         default_locale: 'fr',
-        ios_cookieless_session: true,
+        no_popup_no_cookie: true,
       })
     ).toEqual({
       tenant_domain: 'shark_academy',
@@ -256,7 +258,7 @@ describe('helpers#prepareConfig/1', () => {
       cryptr_base_url: 'https://auth.cryptr.eu',
       default_locale: 'fr',
       dedicated_server: false,
-      ios_cookieless_session: true,
+      no_popup_no_cookie: true,
     });
   });
 });

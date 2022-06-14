@@ -74,6 +74,7 @@ describe('apiHelpers#tokenUrl/3', () => {
     audience: 'cryptr://app',
     default_redirect_uri: 'cryptr://app',
     dedicated_server: false,
+    no_popup_no_cookie: false,
   };
   const authorization = { authorization_id: 'azerty' };
 
@@ -125,6 +126,7 @@ describe('apiHelpers#ssoSignUrl/3', () => {
     audience: 'cryptr://app',
     default_redirect_uri: 'cryptr://app',
     dedicated_server: false,
+    no_popup_no_cookie: false,
   };
   const idpId = 'shark_academy_po54ze';
   const transaction = new Transaction(config.default_redirect_uri, Sign.SSO);
@@ -146,6 +148,7 @@ describe('apiHelpers#revokeTokenUrl/1', () => {
     audience: 'cryptr://app',
     default_redirect_uri: 'cryptr://app',
     dedicated_server: false,
+    no_popup_no_cookie: false,
   };
 
   it('should return revoke token url if sample transaction and sample refresh', () => {
@@ -173,6 +176,7 @@ describe('apiHelpers#sloAfterRevokeTokenUrl/2', () => {
     audience: 'cryptr://app',
     default_redirect_uri: 'cryptr://app',
     dedicated_server: false,
+    no_popup_no_cookie: false,
   };
   const sloCode = 'remove_me';
 
@@ -193,6 +197,7 @@ describe('apiHelpers#refreshTokenUrl/2', () => {
     audience: 'cryptr://app',
     default_redirect_uri: 'cryptr://app',
     dedicated_server: false,
+    no_popup_no_cookie: false,
   };
   const refreshTransaction = new Transaction(
     config.default_redirect_uri,
@@ -228,6 +233,7 @@ describe('apiHelpers#ssoGatewayUrl', () => {
     audience: 'cryptr://app',
     default_redirect_uri: 'cryptr://app',
     dedicated_server: false,
+    no_popup_no_cookie: false,
   };
 
   const transaction = new Transaction(config.default_redirect_uri, Sign.SSO);
