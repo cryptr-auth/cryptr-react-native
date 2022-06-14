@@ -4,10 +4,10 @@ import { CRYPTR_BASE_URL_EU, CRYPTR_BASE_URL_US } from './constants';
 import { Locale, Region } from './enums';
 import type {
   IHash,
+  JwtBodyObject,
   PreparedCryptrConfig,
   ProviderOptions,
 } from './interfaces';
-import Jwt from './jwt';
 
 const finalCryptrBaseUrl = (options: ProviderOptions) => {
   if (options.cryptr_base_url) {
@@ -120,14 +120,15 @@ export const organizationDomain = (
 };
 
 export const canProcessSloCode = (
-  slo_code: any,
-  access_token: string
+  access_token_fields: JwtBodyObject,
+  slo_code?: string,
+  platform = Platform.OS
 ): boolean => {
-  let ips = Jwt.body(access_token).ips;
+  let ips = access_token_fields.ips;
   return (
     slo_code !== undefined &&
     slo_code !== '' &&
-    Platform.OS === 'android' &&
+    platform !== 'ios' &&
     ips !== 'google'
   );
 };

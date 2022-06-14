@@ -198,7 +198,7 @@ const CryptrProvider: React.FC<ProviderProps> = ({
       setUnAuthenticated();
       Cryptr.removeRefresh(
         (_data: any) => {
-          if (canProcessSloCode(slo_code, access_token)) {
+          if (canProcessSloCode(Jwt.body(access_token), slo_code)) {
             let sloUrl = sloAfterRevokeTokenUrl(config, slo_code);
             Cryptr.startSecuredView(
               sloUrl,

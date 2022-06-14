@@ -1,5 +1,6 @@
 import Transaction from '../../models/Transaction';
 import {
+  canProcessSloCode,
   extractParamsFromUri,
   logOutBody,
   prepareConfig,
@@ -228,5 +229,41 @@ describe('helpers#prepareConfig/1', () => {
       default_locale: 'fr',
       dedicated_server: true,
     });
+  });
+});
+
+describe('helpers#canProcessSloCode/2', () => {
+  it('returns false if undefined slo_code', () => {
+    expect(canProcessSloCode({ ips: 'cryptr' })).toBeFalsy();
+  });
+
+  it('returns false if null slo_code', () => {
+    expect(canProcessSloCode({ ips: 'cryptr' })).toBeFalsy();
+  });
+
+  it('returns false if blank_string slo_code', () => {
+    expect(canProcessSloCode({ ips: 'cryptr' }, '')).toBeFalsy();
+  });
+
+  it('returns false if right ips, present slo_code but ios platform', () => {
+    expect(canProcessSloCode({ ips: 'cryptr' }, 'slo_code', 'ios')).toBeFalsy();
+  });
+
+  it('returns false if slo_code, right platform but google ips', () => {
+    expect(
+      canProcessSloCode({ ips: 'google' }, 'slo_code', 'android')
+    ).toBeFalsy();
+  });
+
+  it('returns true if string slo_code and ips not google and compatible platform', () => {
+    expect(
+      canProcessSloCode({ ips: 'cryptr' }, 'slo_code', 'web')
+    ).toBeTruthy();
+    expect(
+      canProcessSloCode({ ips: 'cryptr' }, 'slo_code', 'android')
+    ).toBeTruthy();
+    expect(
+      canProcessSloCode({ ips: 'cryptr' }, 'slo_code', 'macos')
+    ).toBeTruthy();
   });
 });
