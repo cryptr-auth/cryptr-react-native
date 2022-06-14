@@ -7,6 +7,7 @@ import type {
   PreparedCryptrConfig,
   ProviderOptions,
 } from './interfaces';
+import Jwt from './jwt';
 
 const finalCryptrBaseUrl = (options: ProviderOptions) => {
   if (options.cryptr_base_url) {
@@ -116,4 +117,17 @@ export const organizationDomain = (
     return refreshToken.split('.')[0];
   }
   return undefined;
+};
+
+export const canProcessSloCode = (
+  slo_code: any,
+  access_token: string
+): boolean => {
+  let ips = Jwt.body(access_token).ips;
+  return (
+    slo_code !== undefined &&
+    slo_code !== '' &&
+    Platform.OS === 'android' &&
+    ips !== 'google'
+  );
 };
