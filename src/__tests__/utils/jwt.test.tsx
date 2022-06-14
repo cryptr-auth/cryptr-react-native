@@ -19,6 +19,7 @@ let config: PreparedCryptrConfig = {
   client_id: 'e2629eb9-3f56-4397-b19d-b85747cecd6b',
   cryptr_base_url: 'http://localhost:4000',
   dedicated_server: false,
+  no_popup_no_cookie: false,
 };
 
 const validExpiredAccess =

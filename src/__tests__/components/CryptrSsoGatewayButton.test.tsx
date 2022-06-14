@@ -168,17 +168,56 @@ describe('CryptrSsoGatewayButton', () => {
       expect.stringContaining(
         'https://auth.cryptr.eu/t/shark_academy/?client_id=123'
       ),
+      false,
       expect.anything(),
       expect.anything()
     );
     expect(startSecuredViewFn).toHaveBeenCalledWith(
       expect.not.stringContaining('idp_id='),
+      false,
       expect.anything(),
       expect.anything()
     );
 
     expect(startSecuredViewFn).toHaveBeenCalledWith(
       expect.not.stringContaining('idp_ids%5B%5D='),
+      false,
+      expect.anything(),
+      expect.anything()
+    );
+
+    startSecuredViewFn.mockRestore();
+  });
+
+  it('should start standard gateway process without no_popup_no_cookie is true on press action', () => {
+    const { getByText } = render(
+      <CryptrProvider {...config} no_popup_no_cookie={true}>
+        <CryptrSsoGatewayButton>
+          <Text>Custom idp content</Text>
+        </CryptrSsoGatewayButton>
+      </CryptrProvider>
+    );
+    const item = getByText('Custom idp content');
+    const startSecuredViewFn = jest.spyOn(Cryptr, 'startSecuredView');
+    fireEvent.press(item);
+    expect(startSecuredViewFn).toHaveBeenCalledWith(
+      expect.stringContaining(
+        'https://auth.cryptr.eu/t/shark_academy/?client_id=123'
+      ),
+      true,
+      expect.anything(),
+      expect.anything()
+    );
+    expect(startSecuredViewFn).toHaveBeenCalledWith(
+      expect.not.stringContaining('idp_id='),
+      true,
+      expect.anything(),
+      expect.anything()
+    );
+
+    expect(startSecuredViewFn).toHaveBeenCalledWith(
+      expect.not.stringContaining('idp_ids%5B%5D='),
+      true,
       expect.anything(),
       expect.anything()
     );
@@ -199,17 +238,20 @@ describe('CryptrSsoGatewayButton', () => {
     fireEvent.press(item);
     expect(startSecuredViewFn).toHaveBeenCalledWith(
       expect.stringContaining('https://auth.cryptr.eu/?client_id'),
+      false,
       expect.anything(),
       expect.anything()
     );
     expect(startSecuredViewFn).toHaveBeenCalledWith(
       expect.not.stringContaining('idp_id='),
+      false,
       expect.anything(),
       expect.anything()
     );
 
     expect(startSecuredViewFn).toHaveBeenCalledWith(
       expect.not.stringContaining('idp_ids%5B%5D='),
+      false,
       expect.anything(),
       expect.anything()
     );
@@ -230,6 +272,7 @@ describe('CryptrSsoGatewayButton', () => {
     fireEvent.press(item);
     expect(startSecuredViewFn).toHaveBeenCalledWith(
       expect.stringContaining('idp_id=app_sso_idp_id'),
+      false,
       expect.anything(),
       expect.anything()
     );
@@ -249,11 +292,13 @@ describe('CryptrSsoGatewayButton', () => {
     fireEvent.press(item);
     expect(startSecuredViewFn).toHaveBeenCalledWith(
       expect.stringContaining('idp_ids%5B%5D=app_sso_idp_id'),
+      false,
       expect.anything(),
       expect.anything()
     );
     expect(startSecuredViewFn).toHaveBeenCalledWith(
       expect.stringContaining('idp_ids%5B%5D=another_idp_id'),
+      false,
       expect.anything(),
       expect.anything()
     );

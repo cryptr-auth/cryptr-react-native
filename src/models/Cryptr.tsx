@@ -9,6 +9,7 @@ const LINKING_ERROR =
 interface CryptrInterface {
   startSecuredView: (
     uri: string,
+    no_popup_no_cookie: boolean,
     successCallback?: (data: any) => any,
     errorCallback?: (error: any) => any
   ) => any;
