@@ -112,13 +112,11 @@ Example:
 Inside this Provider, you can handle Cryptr Authentication using our Hooks and/or components.
 
 #### iOS Alert dialog on SSO log in
+
+If you want to avoid the display of the below Alert dialog on iOS. you can add `no_popup_no_cookie: true` to your config.
 ![Capture d’écran 2022-06-14 à 19 05 54](https://user-images.githubusercontent.com/2788767/173638699-14f1f856-6559-46fa-88a0-fc770e0ebf6a.png)
 
-If you want to avoid the display of the above Alert dialog on iOS. you can add `no_popup_no_cookie: true` to your config.
-
 **:warning: With this configuration, even the default browser has registered credentials, end-user will have to type them each type.**
-
-
 
 ### Hooks
 
