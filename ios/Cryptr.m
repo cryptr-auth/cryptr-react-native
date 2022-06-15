@@ -108,6 +108,7 @@ RCT_EXPORT_METHOD(getRefresh:(RCTResponseSenderBlock)callback
 }
 
 RCT_EXPORT_METHOD(startSecuredView:(NSURL *)url
+                  prefersEphemeralWebBrowserSession:(BOOL)prefersEphemeralWebBrowserSession
                   successCallback:(RCTResponseSenderBlock)successCallback
                   errorCallback:(RCTResponseSenderBlock)errorCallback)
 {
@@ -142,9 +143,9 @@ RCT_EXPORT_METHOD(startSecuredView:(NSURL *)url
         #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
         if (@available(iOS 13.0, *)) {
             session.presentationContextProvider = self;
-            // if ([urlStr rangeOfString:@"slo-after-revoke-token"].location == NSNotFound) {
-            //   session.prefersEphemeralWebBrowserSession = true;
-            // }
+            if (prefersEphemeralWebBrowserSession) {
+              session.prefersEphemeralWebBrowserSession = true;
+            }
         }
         #endif
 

@@ -48,7 +48,11 @@ const AuthenticatedView = () => {
       <Text style={styles.textAuthenticated}>You're logged in</Text>
       <HorizontalDivider />
       {user() && (
-        <TokenView title={user()!.tnt} value={`Issued at ${user()!.iat}`} />
+        <>
+          <TokenView title={user()!.tnt} value={`Issued at ${user()!.iat}`} />
+          <TokenView title={'SCI'} value={user()!.sci || '?'} />
+          <TokenView title={'IPS'} value={user()!.ips || '?'} />
+        </>
       )}
       {accessToken && <TokenView title="Access Token" value={accessToken} />}
       {user() && <TokenView title="User" value={JSON.stringify(user())} />}

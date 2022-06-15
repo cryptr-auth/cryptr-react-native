@@ -4,6 +4,7 @@ import { CRYPTR_BASE_URL_EU, CRYPTR_BASE_URL_US } from './constants';
 import { Locale, Region } from './enums';
 import type {
   IHash,
+  JwtBodyObject,
   PreparedCryptrConfig,
   ProviderOptions,
 } from './interfaces';
@@ -28,6 +29,7 @@ export const prepareConfig = (
     default_locale: options.default_locale || deviceCryptrLocale(),
     default_redirect_uri: options.default_redirect_uri,
     dedicated_server: options.dedicated_server || false,
+    no_popup_no_cookie: options.no_popup_no_cookie || false,
   };
 };
 
@@ -116,4 +118,18 @@ export const organizationDomain = (
     return refreshToken.split('.')[0];
   }
   return undefined;
+};
+
+export const canProcessSloCode = (
+  access_token_fields: JwtBodyObject,
+  slo_code?: string,
+  platform = Platform.OS
+): boolean => {
+  let ips = access_token_fields.ips;
+  return (
+    slo_code !== undefined &&
+    slo_code !== '' &&
+    platform !== 'ios' &&
+    ips !== 'google'
+  );
 };

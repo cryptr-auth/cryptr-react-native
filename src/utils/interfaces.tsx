@@ -37,11 +37,13 @@ export interface CryptrConfig {
   cryptr_base_url?: string;
   telemetry?: boolean;
   dedicated_server?: boolean;
+  no_popup_no_cookie?: boolean;
 }
 
 export interface PreparedCryptrConfig extends CryptrConfig {
   cryptr_base_url: string;
   dedicated_server: boolean;
+  no_popup_no_cookie: boolean;
 }
 
 export interface ProviderOptions extends CryptrConfig {}
@@ -68,6 +70,10 @@ export type JwtHeaderType = {
   [key: string]: any;
 };
 
+export type JwtBodyObject = {
+  [key: string]: any;
+};
+
 export type CryptrUser = {
   application_metadata?: MetadataType;
   at_hash: string;
@@ -89,5 +95,7 @@ export type CryptrUser = {
   scp: string[];
   sub: string;
   tnt: string;
+  sci?: string;
+  ips?: string;
   ver: number;
 };

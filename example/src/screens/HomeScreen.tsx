@@ -1,5 +1,5 @@
 import React from 'react';
-import { SafeAreaView, Text } from 'react-native';
+import { SafeAreaView, ScrollView, Text } from 'react-native';
 import { useCryptr } from '@cryptr/cryptr-react-native';
 import Toast from 'react-native-toast-message';
 import LoadingView from '../components/LoadingView';
@@ -11,11 +11,13 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.root}>
-      <Text style={styles.title}>Cryptr auth sample</Text>
-      {error && error_description && (
-        <Text style={styles.error}>{error_description}</Text>
-      )}
-      <>{isLoading ? <LoadingView /> : <UnloadingView />}</>
+      <ScrollView>
+        <Text style={styles.title}>Cryptr auth sample</Text>
+        {error && error_description && (
+          <Text style={styles.error}>{error_description}</Text>
+        )}
+        <>{isLoading ? <LoadingView /> : <UnloadingView />}</>
+      </ScrollView>
 
       <Toast />
     </SafeAreaView>
