@@ -1,6 +1,6 @@
 PODS:
   - boost-for-react-native (1.63.0)
-  - cryptr-cryptr-react-native (0.2.1):
+  - cryptr-cryptr-react-native (0.2.2):
     - React-Core
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.63.4)
@@ -342,7 +342,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
-  cryptr-cryptr-react-native: 35d0ad61c94d28b772364210732a53bb02033197
+  cryptr-cryptr-react-native: a84e3e492a83019f7b34596f9351d2410c85df27
   DoubleConversion: cde416483dac037923206447da6e1454df403714
   FBLazyVector: 3bb422f41b18121b71783a905c10e58606f7dc3e
   FBReactNativeSpec: f2c97f2529dd79c083355182cc158c9f98f4bd6e
