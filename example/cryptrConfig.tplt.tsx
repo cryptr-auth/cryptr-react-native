@@ -11,4 +11,3 @@ export const cryptrConfig: CryptrConfig = {
 };
 
 export const IDP_ID = 'YOUR_IDP_ID';
-export const IDP_ID2 = 'YOUR_SECOND_IDP_ID';
