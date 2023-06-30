@@ -50,6 +50,14 @@ export const tokenUrl = (
   return urlBuilder(urlParts);
 };
 
+export const universalTokenUrl = (
+  config: PreparedCryptrConfig,
+  orgDOmain: string
+): string => {
+  let urlParts = [config.cryptr_base_url, 'org', orgDOmain, 'oauth2', 'token'];
+  return urlBuilder(urlParts);
+};
+
 export const ssoSignUrl = (
   config: PreparedCryptrConfig,
   ssoTransaction: Transaction,
