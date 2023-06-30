@@ -12,6 +12,7 @@ import {
   ssoSignUrl,
   ssoGatewayUrl,
   tokenUrl,
+  universalTokenUrl,
 } from '../utils/apiHelpers';
 import { CryptrReducerActionKind, Sign } from '../utils/enums';
 import type {
@@ -30,6 +31,7 @@ import {
   prepareConfig,
   refreshBody,
   tokensBody,
+  universalTokensBody,
 } from '../utils/helpers';
 import { DeviceEventEmitter } from 'react-native';
 import Jwt from '../utils/jwt';
@@ -126,8 +128,25 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     callback?: (data: any) => any
   ) => {
     let body = tokensBody(transaction, params, config);
+    const tokenURL = tokenUrl(config, params, transaction);
+    jsonApiRequest(tokenURL, body)
+      .then((resp) => resp.json())
+      .then((json) => {
+        handleNewTokens(json, callback);
+      })
+      .catch((error) => {
+        setError(error);
+      });
+  };
 
-    jsonApiRequest(tokenUrl(config, params, transaction), body)
+  const getUniversalTokens = (
+    params: any,
+    transaction: Transaction,
+    callback?: (data: any) => any
+  ) => {
+    let body = universalTokensBody(transaction, params, config);
+    const tokenURL = universalTokenUrl(config, params.organization_domain);
+    jsonApiRequest(tokenURL, body)
       .then((resp) => resp.json())
       .then((json) => {
         handleNewTokens(json, callback);
@@ -144,7 +163,11 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     return (incomeUri: string) => {
       try {
         let params = extractParamsFromUri(incomeUri);
-        getTokens(params, transaction, callback);
+        if (params.request_id) {
+          getUniversalTokens(params, transaction, callback);
+        } else {
+          getTokens(params, transaction, callback);
+        }
       } catch (error) {
         setError(error);
       }
