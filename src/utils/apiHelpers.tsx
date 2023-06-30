@@ -15,7 +15,7 @@ const urlBuilder = (
   let url = new URL(urlParts.join('/'));
   if (queryParams) {
     queryParams.forEach((queryParam) => {
-      url.searchParams.append(queryParam[0], queryParam[1]);
+      url.searchParams.append(queryParam[0], encodeURIComponent(queryParam[1]));
     });
   }
 
@@ -47,6 +47,14 @@ export const tokenUrl = (
     authorization_id,
     'token',
   ];
+  return urlBuilder(urlParts);
+};
+
+export const universalTokenUrl = (
+  config: PreparedCryptrConfig,
+  orgDOmain: string
+): string => {
+  let urlParts = [config.cryptr_base_url, 'org', orgDOmain, 'oauth2', 'token'];
   return urlBuilder(urlParts);
 };
 
