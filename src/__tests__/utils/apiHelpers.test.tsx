@@ -184,7 +184,7 @@ describe('apiHelpers#sloAfterRevokeTokenUrl/2', () => {
     let url = sloAfterRevokeTokenUrl(config, sloCode);
 
     expect(url).toEqual(
-      'https://cryptr.authent.me/api/v1/tenants/shark-academy/123-aze/oauth/token/slo-after-revoke-token?slo_code=remove_me&target_url=cryptr%3A%2F%2Fapp'
+      'https://cryptr.authent.me/api/v1/tenants/shark-academy/123-aze/oauth/token/slo-after-revoke-token?slo_code=remove_me&target_url=cryptr://app'
     );
   });
 });
@@ -249,8 +249,8 @@ describe('apiHelpers#ssoGatewayUrl', () => {
     expect(searchParams.get('idp_ids[]')).toBeNull();
     expect(searchParams.get('locale')).toEqual('en');
     expect(searchParams.get('client_state')).toEqual(transaction.pkce.state);
-    expect(searchParams.get('scope')).toEqual(transaction.scope);
-    expect(searchParams.get('redirect_uri')).toEqual('cryptr://app');
+    expect(searchParams.get('scope')).toEqual(encodeURIComponent(transaction.scope));
+    expect(searchParams.get('redirect_uri')).toEqual(encodeURIComponent('cryptr://app'));
     expect(searchParams.get('code_challenge')).toEqual(
       transaction.pkce.codeChallenge
     );
@@ -268,8 +268,8 @@ describe('apiHelpers#ssoGatewayUrl', () => {
     expect(searchParams.get('idp_ids[]')).toBeNull();
     expect(searchParams.get('locale')).toEqual('en');
     expect(searchParams.get('client_state')).toEqual(transaction.pkce.state);
-    expect(searchParams.get('scope')).toEqual(transaction.scope);
-    expect(searchParams.get('redirect_uri')).toEqual('cryptr://app');
+    expect(searchParams.get('scope')).toEqual(encodeURIComponent(transaction.scope));
+    expect(searchParams.get('redirect_uri')).toEqual(encodeURIComponent('cryptr://app'));
     expect(searchParams.get('code_challenge')).toEqual(
       transaction.pkce.codeChallenge
     );
@@ -289,8 +289,8 @@ describe('apiHelpers#ssoGatewayUrl', () => {
     expect(searchParams.get('idp_ids[]')).toBeNull();
     expect(searchParams.get('locale')).toEqual('en');
     expect(searchParams.get('client_state')).toEqual(transaction.pkce.state);
-    expect(searchParams.get('scope')).toEqual(transaction.scope);
-    expect(searchParams.get('redirect_uri')).toEqual('cryptr://app');
+    expect(searchParams.get('scope')).toEqual(encodeURIComponenttransaction.scope));
+    expect(searchParams.get('redirect_uri')).toEqual(encodeURIComponent'cryptr://app'));
     expect(searchParams.get('code_challenge')).toEqual(
       transaction.pkce.codeChallenge
     );
@@ -316,8 +316,8 @@ describe('apiHelpers#ssoGatewayUrl', () => {
     ]);
     expect(searchParams.get('locale')).toEqual('en');
     expect(searchParams.get('client_state')).toEqual(transaction.pkce.state);
-    expect(searchParams.get('scope')).toEqual(transaction.scope);
-    expect(searchParams.get('redirect_uri')).toEqual('cryptr://app');
+    expect(searchParams.get('scope')).toEqual(encodeURIComponent(transaction.scope));
+    expect(searchParams.get('redirect_uri')).toEqual(encodeURIComponent('cryptr://app'));
     expect(searchParams.get('code_challenge')).toEqual(
       transaction.pkce.codeChallenge
     );
