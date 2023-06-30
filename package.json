@@ -29,6 +29,8 @@
     "prepare": "bob build",
     "release": "release-it",
     "example": "yarn --cwd example",
+    "ios:example": "cd example && yarn ios",
+    "android:example": "cd example && yarn android",
     "pods": "cd example && pod-install --quiet",
     "bootstrap": "yarn example && yarn && yarn pods"
   },
