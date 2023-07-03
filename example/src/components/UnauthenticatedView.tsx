@@ -1,11 +1,12 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import {
+  GatewayButton,
   SsoGatewayButton,
   SsoSignInButton,
   useCryptr,
 } from '@cryptr/cryptr-react-native';
-import { IDP_ID, IDP_ID2 } from '../../cryptrConfig.template';
+import { IDP_ID } from '../../cryptrConfig.template';
 import { styles } from '../styles';
 import HorizontalDivider from './HorizontalDivider';
 
@@ -30,7 +31,13 @@ const UnauthenticatedView = () => {
     <>
       <SsoSignInButton idpId={IDP_ID} />
       <HorizontalDivider />
-      <SsoGatewayButton autoHide={false} text="Gateway" />
+      {/* <SsoGatewayButton autoHide={false} text="Gateway" /> */}
+      <GatewayButton text="Bare Gateway" />
+      <GatewayButton domain="cryptr" text="Sign In With `cryptr`" />
+      <GatewayButton
+        email="thibaud@cryptr.co"
+        text="Sign In With `thibaud@cryptr.co`"
+      />
       <View>
         <Pressable
           onPress={() => signinWithSSOGateway(IDP_ID)}
@@ -38,10 +45,10 @@ const UnauthenticatedView = () => {
         >
           <Text>Gateway on IDP</Text>
         </Pressable>
-        <SsoGatewayButton
+        {/* <SsoGatewayButton
           idpId={[IDP_ID, IDP_ID2]}
           text="Gateway with multiple IDPs"
-        />
+        /> */}
       </View>
     </>
   );
