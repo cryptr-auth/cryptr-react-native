@@ -4,7 +4,6 @@ import {
   refreshTokenUrl,
   revokeTokenUrl,
   sloAfterRevokeTokenUrl,
-  ssoSignUrl,
   tokenUrl,
 } from '../../utils/apiHelpers';
 import Transaction from '../../models/Transaction';
@@ -113,28 +112,6 @@ describe('apiHelpers#tokenUrl/3', () => {
 
     expect(url).toEqual(
       `https://cryptr.authent.me/api/v1/tenants/misapret/123-aze/${transaction.pkce.state}/oauth/signup/client/${authorization.authorization_id}/token`
-    );
-  });
-});
-
-describe('apiHelpers#ssoSignUrl/3', () => {
-  const config: PreparedCryptrConfig = {
-    cryptr_base_url: 'https://cryptr.authent.me',
-    tenant_domain: 'shark-academy',
-    client_id: '123-aze',
-    audience: 'cryptr://app',
-    default_redirect_uri: 'cryptr://app',
-    dedicated_server: false,
-    no_popup_no_cookie: false,
-  };
-  const idpId = 'shark_academy_po54ze';
-  const transaction = new Transaction(config.default_redirect_uri, Sign.SSO);
-
-  it('should return signin token url if sample transaction', () => {
-    let url = ssoSignUrl(config, transaction, idpId);
-
-    expect(url).toEqual(
-      `https://cryptr.authent.me/enterprise/shark_academy_po54ze/login?client_id=123-aze&redirect_uri=cryptr%253A%252F%252Fapp&locale=en&scope=openid%2520email%2520profile&state=${transaction.pkce.state}&code_challenge=${transaction.pkce.codeChallenge}&code_challenge_method=S256`
     );
   });
 });

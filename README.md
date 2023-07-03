@@ -22,7 +22,6 @@ React Native SDK for Cryptr Authentication through SSO
       - [user](#user)
       - [accessToken](#accesstoken)
       - [idToken](#idtoken)
-      - [signinWithSSO](#signinwithsso)
       - [refreshTokens](#refreshtokens)
       - [logOut](#logout)
       - [error](#error)
@@ -195,19 +194,6 @@ const { idToken } = useCryptr()
 --
 
 Actions
-
-#### signinWithSSO
-
-Hook action to sign in the user using a specific SSO.
-*Requires* `idpId` value.
-
-
-```js
-const { signinWithSSO } = useCryptr()
-
-// [...]
-signinWithSSO(idpID: string, successCallback?: (data: any) => any, errorCallback?: (data: any) => any)
-```
 
 #### refreshTokens
 

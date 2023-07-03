@@ -58,34 +58,6 @@ export const universalTokenUrl = (
   return urlBuilder(urlParts);
 };
 
-export const ssoSignUrl = (
-  config: PreparedCryptrConfig,
-  ssoTransaction: Transaction,
-  idpId: string
-): string => {
-  const { cryptr_base_url, client_id } = config;
-  const {
-    redirectUri,
-    locale,
-    scope,
-    pkce: { state: pkceState, codeChallenge, codeChallengeMethod },
-  } = ssoTransaction;
-  let queryParams = [
-    ['client_id', client_id] as QueryParam<string, string>,
-    ['redirect_uri', redirectUri] as QueryParam<string, string>,
-    ['locale', locale] as QueryParam<string, string>,
-    ['scope', scope] as QueryParam<string, string>,
-    ['state', pkceState] as QueryParam<string, string>,
-    ['code_challenge', codeChallenge] as QueryParam<string, string>,
-    ['code_challenge_method', codeChallengeMethod] as QueryParam<
-      string,
-      string
-    >,
-  ];
-  let urlParts = [cryptr_base_url, 'enterprise', idpId, 'login'];
-  return urlBuilder(urlParts, queryParams);
-};
-
 export const domainGatewayUrl = (
   config: PreparedCryptrConfig,
   transaction: Transaction,

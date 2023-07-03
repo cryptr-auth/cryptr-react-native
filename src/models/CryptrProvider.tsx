@@ -9,7 +9,6 @@ import {
   refreshTokenUrl,
   revokeTokenUrl,
   sloAfterRevokeTokenUrl,
-  ssoSignUrl,
   tokenUrl,
   universalTokenUrl,
   domainGatewayUrl,
@@ -173,25 +172,6 @@ const CryptrProvider: React.FC<ProviderProps> = ({
         setError(error);
       }
     };
-  };
-
-  const signInWithSSO = (
-    idpId: string,
-    successCallback?: (data: any) => any,
-    errorCallback?: (data: any) => any
-  ) => {
-    let ssoTransaction = new Transaction(config.default_redirect_uri, Sign.SSO);
-    let ssoUrl = ssoSignUrl(config, ssoTransaction, idpId);
-    setLoading();
-    Cryptr.startSecuredView(
-      ssoUrl,
-      config.no_popup_no_cookie,
-      handleRedirectCalback(ssoTransaction, successCallback),
-      (error: any) => {
-        setError(error);
-        errorCallback && errorCallback(error);
-      }
-    );
   };
 
   const signInWithDomain = (
@@ -398,11 +378,6 @@ const CryptrProvider: React.FC<ProviderProps> = ({
       value={{
         ...state,
         config: () => config,
-        signinWithSSO: (
-          idpId: string,
-          successCallback?: (data: any) => any,
-          errorCallback?: (data: any) => any
-        ) => signInWithSSO(idpId, successCallback, errorCallback),
         logOut: (
           successCallback?: (data: any) => any,
           errorCallback?: (error: any) => any

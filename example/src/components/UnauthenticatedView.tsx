@@ -2,7 +2,6 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import {
   GatewayButton,
-  SsoGatewayButton,
   SsoSignInButton,
   useCryptr,
 } from '@cryptr/cryptr-react-native';
