@@ -5,7 +5,6 @@ import {
   revokeTokenUrl,
   sloAfterRevokeTokenUrl,
   ssoSignUrl,
-  ssoGatewayUrl,
   tokenUrl,
 } from '../../utils/apiHelpers';
 import Transaction from '../../models/Transaction';
@@ -221,124 +220,6 @@ describe('apiHelpers#refreshTokenUrl/2', () => {
 
     expect(url).toEqual(
       `https://cryptr.authent.me/api/v1/tenants/misapret/123-aze/${refreshTransaction.pkce.state}/oauth/client/token`
-    );
-  });
-});
-
-describe('apiHelpers#ssoGatewayUrl', () => {
-  const config: PreparedCryptrConfig = {
-    cryptr_base_url: 'https://cryptr.authent.me',
-    tenant_domain: 'shark-academy',
-    client_id: '123-aze',
-    audience: 'cryptr://app',
-    default_redirect_uri: 'cryptr://app',
-    dedicated_server: false,
-    no_popup_no_cookie: false,
-  };
-
-  const transaction = new Transaction(config.default_redirect_uri, Sign.SSO);
-
-  it('should returns standard url', () => {
-    let url = ssoGatewayUrl(config, transaction);
-    let searchParams = new URLSearchParams(url);
-
-    expect(url).toMatch(
-      'https://cryptr.authent.me/t/shark-academy/?client_id=123-aze'
-    );
-    expect(searchParams.get('idp_id')).toBeNull();
-    expect(searchParams.get('idp_ids[]')).toBeNull();
-    expect(searchParams.get('locale')).toEqual('en');
-    expect(searchParams.get('client_state')).toEqual(transaction.pkce.state);
-    expect(searchParams.get('scope')).toEqual(
-      encodeURIComponent(transaction.scope)
-    );
-    expect(searchParams.get('redirect_uri')).toEqual(
-      encodeURIComponent('cryptr://app')
-    );
-    expect(searchParams.get('code_challenge')).toEqual(
-      transaction.pkce.codeChallenge
-    );
-    expect(searchParams.get('code_challenge_method')).toEqual(
-      transaction.pkce.codeChallengeMethod
-    );
-  });
-
-  it('should returns dedicated standard url', () => {
-    let url = ssoGatewayUrl({ ...config, dedicated_server: true }, transaction);
-    let searchParams = new URLSearchParams(url);
-
-    expect(url).toMatch('https://cryptr.authent.me/?client_id=123-aze');
-    expect(searchParams.get('idp_id')).toBeNull();
-    expect(searchParams.get('idp_ids[]')).toBeNull();
-    expect(searchParams.get('locale')).toEqual('en');
-    expect(searchParams.get('client_state')).toEqual(transaction.pkce.state);
-    expect(searchParams.get('scope')).toEqual(
-      encodeURIComponent(transaction.scope)
-    );
-    expect(searchParams.get('redirect_uri')).toEqual(
-      encodeURIComponent('cryptr://app')
-    );
-    expect(searchParams.get('code_challenge')).toEqual(
-      transaction.pkce.codeChallenge
-    );
-    expect(searchParams.get('code_challenge_method')).toEqual(
-      transaction.pkce.codeChallengeMethod
-    );
-  });
-
-  it('should returns url with idp id provided', () => {
-    let url = ssoGatewayUrl(config, transaction, 'skar_academy_123ded');
-    let searchParams = new URLSearchParams(url);
-
-    expect(url).toMatch(
-      'https://cryptr.authent.me/t/shark-academy/?client_id=123-aze'
-    );
-    expect(searchParams.get('idp_id')).toEqual('skar_academy_123ded');
-    expect(searchParams.get('idp_ids[]')).toBeNull();
-    expect(searchParams.get('locale')).toEqual('en');
-    expect(searchParams.get('client_state')).toEqual(transaction.pkce.state);
-    expect(searchParams.get('scope')).toEqual(
-      encodeURIComponent(transaction.scope)
-    );
-    expect(searchParams.get('redirect_uri')).toEqual(
-      encodeURIComponent('cryptr://app')
-    );
-    expect(searchParams.get('code_challenge')).toEqual(
-      transaction.pkce.codeChallenge
-    );
-    expect(searchParams.get('code_challenge_method')).toEqual(
-      transaction.pkce.codeChallengeMethod
-    );
-  });
-
-  it('should returns url with multiple idp ids if array provided', () => {
-    let url = ssoGatewayUrl(config, transaction, [
-      'skar_academy_123ded',
-      'misapret!1242dsz',
-    ]);
-    let searchParams = new URLSearchParams(url);
-
-    expect(url).toMatch(
-      'https://cryptr.authent.me/t/shark-academy/?client_id=123-aze'
-    );
-    expect(searchParams.get('idp_id')).toBeNull();
-    expect(searchParams.getAll('idp_ids[]')).toEqual([
-      'skar_academy_123ded',
-      'misapret!1242dsz',
-    ]);
-    expect(searchParams.get('locale')).toEqual('en');
-    expect(searchParams.get('client_state')).toEqual(transaction.pkce.state);
-    expect(searchParams.get('scope')).toEqual(
-      encodeURIComponent(transaction.scope)
-    );
-    expect(searchParams.get('redirect_uri')).toEqual(
-      encodeURIComponent('cryptr://app')
-    );
-    expect(searchParams.get('code_challenge')).toEqual(
-      transaction.pkce.codeChallenge
-    );
-    expect(searchParams.get('code_challenge_method')).toEqual(
-      transaction.pkce.codeChallengeMethod
     );
   });
 });

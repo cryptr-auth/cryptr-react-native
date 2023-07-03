@@ -15,11 +15,6 @@ const initialContext = {
     successCallback?: (data: any) => any,
     errorCallback?: (data: any) => any
   ) => void,
-  signinWithSSOGateway: error as unknown as (
-    idpId?: string | string[],
-    successCallback?: (data: any) => any,
-    errorCallback?: (data: any) => any
-  ) => void,
   signInWithDomain: error as unknown as (
     domain?: string,
     successCallback?: (data: any) => any,

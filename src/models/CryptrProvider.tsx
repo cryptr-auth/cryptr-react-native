@@ -10,7 +10,6 @@ import {
   revokeTokenUrl,
   sloAfterRevokeTokenUrl,
   ssoSignUrl,
-  ssoGatewayUrl,
   tokenUrl,
   universalTokenUrl,
   domainGatewayUrl,
@@ -186,25 +185,6 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     setLoading();
     Cryptr.startSecuredView(
       ssoUrl,
-      config.no_popup_no_cookie,
-      handleRedirectCalback(ssoTransaction, successCallback),
-      (error: any) => {
-        setError(error);
-        errorCallback && errorCallback(error);
-      }
-    );
-  };
-
-  const signInWithSSOGateway = (
-    idpId?: string | string[],
-    successCallback?: (data: any) => any,
-    errorCallback?: (data: any) => any
-  ) => {
-    let ssoTransaction = new Transaction(config.default_redirect_uri, Sign.SSO);
-    let ssoGatewayURL = ssoGatewayUrl(config, ssoTransaction, idpId);
-    setLoading();
-    Cryptr.startSecuredView(
-      ssoGatewayURL,
       config.no_popup_no_cookie,
       handleRedirectCalback(ssoTransaction, successCallback),
       (error: any) => {
@@ -423,11 +403,6 @@ const CryptrProvider: React.FC<ProviderProps> = ({
           successCallback?: (data: any) => any,
           errorCallback?: (data: any) => any
         ) => signInWithSSO(idpId, successCallback, errorCallback),
-        signinWithSSOGateway: (
-          idpId?: string | string[],
-          successCallback?: (data: any) => any,
-          errorCallback?: (data: any) => any
-        ) => signInWithSSOGateway(idpId, successCallback, errorCallback),
         logOut: (
           successCallback?: (data: any) => any,
           errorCallback?: (error: any) => any

@@ -152,46 +152,6 @@ export const emailGatewayUrl = (
   return urlBuilder([cryptrBaseUrl], queryParams);
 };
 
-export const ssoGatewayUrl = (
-  config: PreparedCryptrConfig,
-  ssoTransaction: Transaction,
-  idpId?: string | string[]
-) => {
-  const { cryptr_base_url, client_id, dedicated_server, tenant_domain } =
-    config;
-  const cryptrBaseUrl = dedicated_server
-    ? cryptr_base_url
-    : [cryptr_base_url, 't', tenant_domain, ''].join('/');
-  const {
-    redirectUri,
-    scope,
-    pkce: { state: clientState, codeChallenge, codeChallengeMethod },
-  } = ssoTransaction;
-  const locale = ssoTransaction.locale || config.default_locale || Locale.EN;
-  let queryParams = [
-    ['client_id', client_id] as QueryParam<string, string>,
-    ['locale', locale] as QueryParam<string, string>,
-    ['client_state', clientState] as QueryParam<string, string>,
-    ['scope', scope] as QueryParam<string, string>,
-    ['redirect_uri', redirectUri] as QueryParam<string, string>,
-    ['code_challenge', codeChallenge] as QueryParam<string, string>,
-    ['code_challenge_method', codeChallengeMethod] as QueryParam<
-      string,
-      string
-    >,
-  ];
-  if (idpId) {
-    if (typeof idpId === 'string') {
-      queryParams.push(['idp_id', idpId] as QueryParam<string, string>);
-    } else {
-      idpId.forEach((idp_id) => {
-        queryParams.push(['idp_ids[]', idp_id] as QueryParam<string, string>);
-      });
-    }
-  }
-  return urlBuilder([cryptrBaseUrl], queryParams);
-};
-
 export const revokeTokenUrl = (
   config: PreparedCryptrConfig,
   refreshToken: string

@@ -4,7 +4,9 @@ React Native SDK for Cryptr Authentication through SSO
 
 ## Summary
 
-  - [Expo](#expo)
+- [@cryptr/cryptr-react-native](#cryptrcryptr-react-native)
+  - [Summary](#summary)
+  - [Expo integration](#expo-integration)
   - [Prerequisites](#prerequisites)
     - [Android](#android)
     - [iOS](#ios)
@@ -14,8 +16,17 @@ React Native SDK for Cryptr Authentication through SSO
     - [3 - Android](#3---android)
   - [Usage](#usage)
     - [Basis](#basis)
-      - [iOS Alert dialog](#ios-alert-dialog-on-sso-log-in)
+      - [iOS Alert dialog on SSO log in](#ios-alert-dialog-on-sso-log-in)
     - [Hooks](#hooks)
+      - [isAuthenticated](#isauthenticated)
+      - [user](#user)
+      - [accessToken](#accesstoken)
+      - [idToken](#idtoken)
+      - [signinWithSSO](#signinwithsso)
+      - [refreshTokens](#refreshtokens)
+      - [logOut](#logout)
+      - [error](#error)
+      - [isLoading](#isloading)
     - [Components](#components)
 
 ## Expo integration
@@ -198,22 +209,6 @@ const { signinWithSSO } = useCryptr()
 signinWithSSO(idpID: string, successCallback?: (data: any) => any, errorCallback?: (data: any) => any)
 ```
 
-#### signinWithSSOGateway
-
-Hook action to sign in the user using Cryptr Gateway when you don't know what is the precise ID used by your end user. You can precise a subset of IDP_ID that the user will be able to consume if none is provided, the end-user will be able to find his by email or organziation_domain.
-
-When you set one string for `idpId` behavior is the same as `signinWithSSO``
-
-:warning: requires a proper setup of your different organizations
-
-
-```js
-const { signinWithSSOGateway } = useCryptr()
-
-// [...]
-signinWithSSOGateway(idpID?: string | string[], successCallback?: (data: any) => any, errorCallback?: (data: any) => any)
-```
-
 #### refreshTokens
 
 Hook action to refresh tokens to new ones.
@@ -265,7 +260,5 @@ const { isLoading } = useCryptr()
 This SDK also includes Components to simplify your integration.
 
 - `SsoSigInButton` to login using SSO (hides when session is already active [`autoHide={false}` to disable])
-
-- `SsoGatewayButton` to login using SSO Gateway (hides when session is already active [`autoHide={false}` to disable])
 - `LogOutButton` to logout user (hides when no session is active [`autoHide={false}` to disable])
 - `RefreshButton` to get new tokens (hides when session is already active [`autoHide={false}` to disable])
