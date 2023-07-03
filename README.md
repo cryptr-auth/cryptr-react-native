@@ -22,6 +22,8 @@ React Native SDK for Cryptr Authentication through SSO
       - [user](#user)
       - [accessToken](#accesstoken)
       - [idToken](#idtoken)
+      - [signInWithDomain](#signinwithdomain)
+      - [signInWithEmail](#signinwithemail)
       - [refreshTokens](#refreshtokens)
       - [logOut](#logout)
       - [error](#error)
@@ -194,6 +196,36 @@ const { idToken } = useCryptr()
 --
 
 Actions
+
+#### signInWithDomain
+
+Hook action to sign in the user using his organization's domain.
+
+```js
+const { signInWithDomain } = useCryptr();
+
+// Signature
+signInWithDomain(domain?: string, successCallback? (data: any) => any, errorCallback?: (data: any) => any)
+
+// Sign in for domain `company-dot-io`
+signInWithDomain('company-dot-io')
+```
+
+💡 If you do not provide value for `domain` user will be asked to input his email address and regarding to your organizations configuration he will be redirected to proper authentication process.
+
+#### signInWithEmail
+
+Hook action to sign in the user using his business email. *Requires* `email` value.
+
+```js
+const { signInWithEmail } = useCryptr();
+
+// Signature
+signInWithEmail(domain?: string, successCallback? (data: any) => any, errorCallback?: (data: any) => any)
+
+// Sign in for email `john@company.io`
+signInWithEmail('john@company.io')
+```
 
 #### refreshTokens
 
