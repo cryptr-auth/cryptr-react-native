@@ -135,7 +135,7 @@ describe('apiHelpers#ssoSignUrl/3', () => {
     let url = ssoSignUrl(config, transaction, idpId);
 
     expect(url).toEqual(
-      `https://cryptr.authent.me/enterprise/shark_academy_po54ze/login?client_id=123-aze&redirect_uri=cryptr%3A%2F%2Fapp&locale=en&scope=openid+email+profile&state=${transaction.pkce.state}&code_challenge=${transaction.pkce.codeChallenge}&code_challenge_method=S256`
+      `https://cryptr.authent.me/enterprise/shark_academy_po54ze/login?client_id=123-aze&redirect_uri=cryptr%253A%252F%252Fapp&locale=en&scope=openid%2520email%2520profile&state=${transaction.pkce.state}&code_challenge=${transaction.pkce.codeChallenge}&code_challenge_method=S256`
     );
   });
 });
@@ -184,7 +184,7 @@ describe('apiHelpers#sloAfterRevokeTokenUrl/2', () => {
     let url = sloAfterRevokeTokenUrl(config, sloCode);
 
     expect(url).toEqual(
-      'https://cryptr.authent.me/api/v1/tenants/shark-academy/123-aze/oauth/token/slo-after-revoke-token?slo_code=remove_me&target_url=cryptr://app'
+      'https://cryptr.authent.me/api/v1/tenants/shark-academy/123-aze/oauth/token/slo-after-revoke-token?slo_code=remove_me&target_url=cryptr%253A%252F%252Fapp'
     );
   });
 });
@@ -249,8 +249,12 @@ describe('apiHelpers#ssoGatewayUrl', () => {
     expect(searchParams.get('idp_ids[]')).toBeNull();
     expect(searchParams.get('locale')).toEqual('en');
     expect(searchParams.get('client_state')).toEqual(transaction.pkce.state);
-    expect(searchParams.get('scope')).toEqual(encodeURIComponent(transaction.scope));
-    expect(searchParams.get('redirect_uri')).toEqual(encodeURIComponent('cryptr://app'));
+    expect(searchParams.get('scope')).toEqual(
+      encodeURIComponent(transaction.scope)
+    );
+    expect(searchParams.get('redirect_uri')).toEqual(
+      encodeURIComponent('cryptr://app')
+    );
     expect(searchParams.get('code_challenge')).toEqual(
       transaction.pkce.codeChallenge
     );
@@ -268,8 +272,12 @@ describe('apiHelpers#ssoGatewayUrl', () => {
     expect(searchParams.get('idp_ids[]')).toBeNull();
     expect(searchParams.get('locale')).toEqual('en');
     expect(searchParams.get('client_state')).toEqual(transaction.pkce.state);
-    expect(searchParams.get('scope')).toEqual(encodeURIComponent(transaction.scope));
-    expect(searchParams.get('redirect_uri')).toEqual(encodeURIComponent('cryptr://app'));
+    expect(searchParams.get('scope')).toEqual(
+      encodeURIComponent(transaction.scope)
+    );
+    expect(searchParams.get('redirect_uri')).toEqual(
+      encodeURIComponent('cryptr://app')
+    );
     expect(searchParams.get('code_challenge')).toEqual(
       transaction.pkce.codeChallenge
     );
@@ -289,8 +297,12 @@ describe('apiHelpers#ssoGatewayUrl', () => {
     expect(searchParams.get('idp_ids[]')).toBeNull();
     expect(searchParams.get('locale')).toEqual('en');
     expect(searchParams.get('client_state')).toEqual(transaction.pkce.state);
-    expect(searchParams.get('scope')).toEqual(encodeURIComponent(transaction.scope));
-    expect(searchParams.get('redirect_uri')).toEqual(encodeURIComponent('cryptr://app'));
+    expect(searchParams.get('scope')).toEqual(
+      encodeURIComponent(transaction.scope)
+    );
+    expect(searchParams.get('redirect_uri')).toEqual(
+      encodeURIComponent('cryptr://app')
+    );
     expect(searchParams.get('code_challenge')).toEqual(
       transaction.pkce.codeChallenge
     );
@@ -316,8 +328,12 @@ describe('apiHelpers#ssoGatewayUrl', () => {
     ]);
     expect(searchParams.get('locale')).toEqual('en');
     expect(searchParams.get('client_state')).toEqual(transaction.pkce.state);
-    expect(searchParams.get('scope')).toEqual(encodeURIComponent(transaction.scope));
-    expect(searchParams.get('redirect_uri')).toEqual(encodeURIComponent('cryptr://app'));
+    expect(searchParams.get('scope')).toEqual(
+      encodeURIComponent(transaction.scope)
+    );
+    expect(searchParams.get('redirect_uri')).toEqual(
+      encodeURIComponent('cryptr://app')
+    );
     expect(searchParams.get('code_challenge')).toEqual(
       transaction.pkce.codeChallenge
     );
