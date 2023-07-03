@@ -39,7 +39,6 @@ const AuthenticatedView = () => {
       .then((data) => console.debug(data))
       .catch((error) => console.error(error));
   };
-
   return (
     <>
       <Text style={styles.textAuthenticated}>You're logged in</Text>
@@ -57,7 +56,6 @@ const AuthenticatedView = () => {
       <LogOutButton
         successCallback={logOutCallback}
         errorCallback={logOutErrorCallback}
-        buttonTextStyle={styles.textLogOut}
       />
       <RefreshButton
         successCallback={refreshCallback}

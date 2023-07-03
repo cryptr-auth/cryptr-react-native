@@ -149,9 +149,8 @@ export const canProcessSloCode = (
 ): boolean => {
   let ips = access_token_fields.ips;
   return (
-    slo_code !== undefined &&
-    slo_code !== '' &&
-    platform !== 'ios' &&
-    ips !== 'google'
+    slo_code !== undefined && slo_code !== '' && platform !== 'ios'
+    // &&
+    // ips !== 'google'
   );
 };
