@@ -13,6 +13,8 @@ import {
   ssoGatewayUrl,
   tokenUrl,
   universalTokenUrl,
+  domainGatewayUrl,
+  emailGatewayUrl,
 } from '../utils/apiHelpers';
 import { CryptrReducerActionKind, Sign } from '../utils/enums';
 import type {
@@ -212,6 +214,44 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     );
   };
 
+  const signInWithDomain = (
+    domain?: string,
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
+  ) => {
+    let transaction = new Transaction(config.default_redirect_uri, Sign.SSO);
+    let uri = domainGatewayUrl(config, transaction, domain);
+    setLoading();
+    Cryptr.startSecuredView(
+      uri,
+      config.no_popup_no_cookie,
+      handleRedirectCalback(transaction, successCallback),
+      (error: any) => {
+        setError(error);
+        errorCallback && errorCallback(error);
+      }
+    );
+  };
+
+  const signInWithEmail = (
+    email: string,
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
+  ) => {
+    let transaction = new Transaction(config.default_redirect_uri, Sign.SSO);
+    let uri = emailGatewayUrl(config, transaction, email);
+    setLoading();
+    Cryptr.startSecuredView(
+      uri,
+      config.no_popup_no_cookie,
+      handleRedirectCalback(transaction, successCallback),
+      (error: any) => {
+        setError(error);
+        errorCallback && errorCallback(error);
+      }
+    );
+  };
+
   const handleLogOut = (
     json: any,
     callback?: (data: any) => any,
@@ -397,6 +437,16 @@ const CryptrProvider: React.FC<ProviderProps> = ({
         user: () => getUser(),
         decoratedRequest: (input: RequestInfo, init?: RequestInit) =>
           decoratedRequest(input, init),
+        signInWithDomain: (
+          domain?: string,
+          successCallback?: (data: any) => any,
+          errorCallback?: (data: any) => any
+        ) => signInWithDomain(domain, successCallback, errorCallback),
+        signInWithEmail: (
+          email: string,
+          successCallback?: (data: any) => any,
+          errorCallback?: (data: any) => any
+        ) => signInWithEmail(email, successCallback, errorCallback),
       }}
     >
       {children}

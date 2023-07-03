@@ -20,6 +20,16 @@ const initialContext = {
     successCallback?: (data: any) => any,
     errorCallback?: (data: any) => any
   ) => void,
+  signInWithDomain: error as unknown as (
+    domain?: string,
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
+  ) => void,
+  signInWithEmail: error as unknown as (
+    email: string,
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
+  ) => void,
   logOut: error as unknown as (
     successCallback?: (data: any) => any,
     errorCallback?: (data: any) => any

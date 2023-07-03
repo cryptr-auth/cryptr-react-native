@@ -86,6 +86,72 @@ export const ssoSignUrl = (
   return urlBuilder(urlParts, queryParams);
 };
 
+export const domainGatewayUrl = (
+  config: PreparedCryptrConfig,
+  transaction: Transaction,
+  domain?: string
+) => {
+  const { client_id, cryptr_base_url, dedicated_server, tenant_domain } =
+    config;
+  const cryptrBaseUrl = dedicated_server
+    ? cryptr_base_url
+    : [cryptr_base_url, 't', tenant_domain, ''].join('/');
+  const locale = transaction.locale || config.default_locale || Locale.EN;
+  const {
+    redirectUri,
+    scope,
+    pkce: { state: clientState, codeChallenge, codeChallengeMethod },
+  } = transaction;
+  let queryParams = [
+    ['client_id', client_id] as QueryParam<string, string>,
+    ['locale', locale] as QueryParam<string, string>,
+    ['scope', scope] as QueryParam<string, string>,
+    ['client_state', clientState] as QueryParam<string, string>,
+    ['redirect_uri', redirectUri] as QueryParam<string, string>,
+    ['code_challenge', codeChallenge] as QueryParam<string, string>,
+    ['code_challenge_method', codeChallengeMethod] as QueryParam<
+      string,
+      string
+    >,
+  ];
+  if (domain !== undefined && domain.trim() !== '') {
+    queryParams.push(['domain', domain] as QueryParam<string, string>);
+  }
+  return urlBuilder([cryptrBaseUrl], queryParams);
+};
+
+export const emailGatewayUrl = (
+  config: PreparedCryptrConfig,
+  transaction: Transaction,
+  email: string
+) => {
+  const { client_id, cryptr_base_url, dedicated_server, tenant_domain } =
+    config;
+  const cryptrBaseUrl = dedicated_server
+    ? cryptr_base_url
+    : [cryptr_base_url, 't', tenant_domain, ''].join('/');
+  const locale = transaction.locale || config.default_locale || Locale.EN;
+  const {
+    redirectUri,
+    scope,
+    pkce: { state: clientState, codeChallenge, codeChallengeMethod },
+  } = transaction;
+  let queryParams = [
+    ['client_id', client_id] as QueryParam<string, string>,
+    ['locale', locale] as QueryParam<string, string>,
+    ['scope', scope] as QueryParam<string, string>,
+    ['client_state', clientState] as QueryParam<string, string>,
+    ['redirect_uri', redirectUri] as QueryParam<string, string>,
+    ['code_challenge', codeChallenge] as QueryParam<string, string>,
+    ['code_challenge_method', codeChallengeMethod] as QueryParam<
+      string,
+      string
+    >,
+    ['email', email] as QueryParam<string, string>,
+  ];
+  return urlBuilder([cryptrBaseUrl], queryParams);
+};
+
 export const ssoGatewayUrl = (
   config: PreparedCryptrConfig,
   ssoTransaction: Transaction,
