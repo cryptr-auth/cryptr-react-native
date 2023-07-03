@@ -25,8 +25,6 @@ export const unauthStyles = StyleSheet.create({
 });
 
 const UnauthenticatedView = () => {
-  const { signinWithSSOGateway } = useCryptr();
-
   return (
     <>
       <SsoSignInButton idpId={IDP_ID} />
@@ -39,12 +37,12 @@ const UnauthenticatedView = () => {
         text="Sign In With `thibaud@cryptr.co`"
       />
       <View>
-        <Pressable
+        {/* <Pressable
           onPress={() => signinWithSSOGateway(IDP_ID)}
           style={styles.button}
         >
           <Text>Gateway on IDP</Text>
-        </Pressable>
+        </Pressable> */}
         {/* <SsoGatewayButton
           idpId={[IDP_ID, IDP_ID2]}
           text="Gateway with multiple IDPs"
