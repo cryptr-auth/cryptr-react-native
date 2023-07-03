@@ -6,6 +6,7 @@ import {
   prepareConfig,
   refreshBody,
   tokensBody,
+  universalTokensBody,
 } from '../../utils/helpers';
 import type { PreparedCryptrConfig } from '../../utils/interfaces';
 import { Sign } from '../..';
@@ -51,6 +52,27 @@ describe('helpers#tokensBody/3', () => {
     let body = tokensBody(transaction, params, config);
     expect(body).toEqual(
       `{"authorization_id":"auth_id","client_id":"123-aze","code":"123-aze","code_verifier":"${transaction.pkce.codeVerifier}","grant_type":"authorization_code","nonce":"${transaction.nonce}"}`
+    );
+  });
+});
+
+describe('helpers#universalTokensBody/3', () => {
+  const config: PreparedCryptrConfig = {
+    cryptr_base_url: 'https://cryptr.authent.me',
+    tenant_domain: 'shark-academy',
+    client_id: '123-aze',
+    audience: 'cryptr://app',
+    default_redirect_uri: 'cryptr://app',
+    dedicated_server: false,
+    no_popup_no_cookie: false,
+  };
+  const params = { authorization_id: 'auth_id' };
+  const transaction = new Transaction(config.default_redirect_uri, Sign.SSO);
+
+  it('should return universal tokens body object', () => {
+    let body = universalTokensBody(transaction, params, config);
+    expect(body).toEqual(
+      `{"grant_type":"authorization_code","client_id":"123-aze","code_verifier":"${transaction.pkce.codeVerifier}","nonce":"${transaction.nonce}","client_state":"${transaction.pkce.state}"}`
     );
   });
 });

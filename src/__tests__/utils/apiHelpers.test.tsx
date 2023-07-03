@@ -5,6 +5,7 @@ import {
   revokeTokenUrl,
   sloAfterRevokeTokenUrl,
   tokenUrl,
+  universalTokenUrl,
 } from '../../utils/apiHelpers';
 import Transaction from '../../models/Transaction';
 import { Sign } from '../..';
@@ -197,6 +198,25 @@ describe('apiHelpers#refreshTokenUrl/2', () => {
 
     expect(url).toEqual(
       `https://cryptr.authent.me/api/v1/tenants/misapret/123-aze/${refreshTransaction.pkce.state}/oauth/client/token`
+    );
+  });
+});
+
+describe('apiHelpers#universalTokenUrl', () => {
+  const config: PreparedCryptrConfig = {
+    cryptr_base_url: 'https://cryptr.authent.me',
+    tenant_domain: 'shark-academy',
+    client_id: '123-aze',
+    audience: 'cryptr://app',
+    default_redirect_uri: 'cryptr://app',
+    dedicated_server: false,
+    no_popup_no_cookie: false,
+  };
+
+  it('should return the org domain oauth2 token url', () => {
+    let url = universalTokenUrl(config, 'some-company');
+    expect(url).toEqual(
+      'https://cryptr.authent.me/org/some-company/oauth2/token'
     );
   });
 });
