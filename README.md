@@ -221,7 +221,7 @@ Hook action to sign in the user using his business email. *Requires* `email` val
 const { signInWithEmail } = useCryptr();
 
 // Signature
-signInWithEmail(domain?: string, successCallback? (data: any) => any, errorCallback?: (data: any) => any)
+signInWithEmail(email: string, successCallback? (data: any) => any, errorCallback?: (data: any) => any)
 
 // Sign in for email `john@company.io`
 signInWithEmail('john@company.io')
@@ -277,6 +277,6 @@ const { isLoading } = useCryptr()
 
 This SDK also includes Components to simplify your integration.
 
-- `SsoSigInButton` to login using SSO (hides when session is already active [`autoHide={false}` to disable])
+- `CryptrGatewayButton` to log in either with domain or email  (hides when session is already active [`autoHide={false}` to disable])
 - `LogOutButton` to logout user (hides when no session is active [`autoHide={false}` to disable])
 - `RefreshButton` to get new tokens (hides when session is already active [`autoHide={false}` to disable])
