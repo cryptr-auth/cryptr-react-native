@@ -221,7 +221,7 @@ Hook action to sign in the user using his business email. *Requires* `email` val
 const { signInWithEmail } = useCryptr();
 
 // Signature
-signInWithEmail(domain?: string, successCallback? (data: any) => any, errorCallback?: (data: any) => any)
+signInWithEmail(email: string, successCallback? (data: any) => any, errorCallback?: (data: any) => any)
 
 // Sign in for email `john@company.io`
 signInWithEmail('john@company.io')
