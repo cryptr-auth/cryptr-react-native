@@ -9,5 +9,3 @@ export const cryptrConfig: CryptrConfig = {
   cryptr_base_url: 'YOUR_CRYPTR_SERVER_URL',
   dedicated_server: true,
 };
-
-export const IDP_ID = 'YOUR_IDP_ID';
