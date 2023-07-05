@@ -15,7 +15,7 @@ const urlBuilder = (
   let url = new URL(urlParts.join('/'));
   if (queryParams) {
     queryParams.forEach((queryParam) => {
-      url.searchParams.append(queryParam[0], queryParam[1]);
+      url.searchParams.append(queryParam[0], encodeURIComponent(queryParam[1]));
     });
   }
 
@@ -50,55 +50,35 @@ export const tokenUrl = (
   return urlBuilder(urlParts);
 };
 
-export const ssoSignUrl = (
+export const universalTokenUrl = (
   config: PreparedCryptrConfig,
-  ssoTransaction: Transaction,
-  idpId: string
+  orgDOmain: string
 ): string => {
-  const { cryptr_base_url, client_id } = config;
-  const {
-    redirectUri,
-    locale,
-    scope,
-    pkce: { state: pkceState, codeChallenge, codeChallengeMethod },
-  } = ssoTransaction;
-  let queryParams = [
-    ['client_id', client_id] as QueryParam<string, string>,
-    ['redirect_uri', redirectUri] as QueryParam<string, string>,
-    ['locale', locale] as QueryParam<string, string>,
-    ['scope', scope] as QueryParam<string, string>,
-    ['state', pkceState] as QueryParam<string, string>,
-    ['code_challenge', codeChallenge] as QueryParam<string, string>,
-    ['code_challenge_method', codeChallengeMethod] as QueryParam<
-      string,
-      string
-    >,
-  ];
-  let urlParts = [cryptr_base_url, 'enterprise', idpId, 'login'];
-  return urlBuilder(urlParts, queryParams);
+  let urlParts = [config.cryptr_base_url, 'org', orgDOmain, 'oauth2', 'token'];
+  return urlBuilder(urlParts);
 };
 
-export const ssoGatewayUrl = (
+export const domainGatewayUrl = (
   config: PreparedCryptrConfig,
-  ssoTransaction: Transaction,
-  idpId?: string | string[]
+  transaction: Transaction,
+  domain?: string
 ) => {
-  const { cryptr_base_url, client_id, dedicated_server, tenant_domain } =
+  const { client_id, cryptr_base_url, dedicated_server, tenant_domain } =
     config;
   const cryptrBaseUrl = dedicated_server
     ? cryptr_base_url
     : [cryptr_base_url, 't', tenant_domain, ''].join('/');
+  const locale = transaction.locale || config.default_locale || Locale.EN;
   const {
     redirectUri,
     scope,
     pkce: { state: clientState, codeChallenge, codeChallengeMethod },
-  } = ssoTransaction;
-  const locale = ssoTransaction.locale || config.default_locale || Locale.EN;
+  } = transaction;
   let queryParams = [
     ['client_id', client_id] as QueryParam<string, string>,
     ['locale', locale] as QueryParam<string, string>,
-    ['client_state', clientState] as QueryParam<string, string>,
     ['scope', scope] as QueryParam<string, string>,
+    ['client_state', clientState] as QueryParam<string, string>,
     ['redirect_uri', redirectUri] as QueryParam<string, string>,
     ['code_challenge', codeChallenge] as QueryParam<string, string>,
     ['code_challenge_method', codeChallengeMethod] as QueryParam<
@@ -106,15 +86,41 @@ export const ssoGatewayUrl = (
       string
     >,
   ];
-  if (idpId) {
-    if (typeof idpId === 'string') {
-      queryParams.push(['idp_id', idpId] as QueryParam<string, string>);
-    } else {
-      idpId.forEach((idp_id) => {
-        queryParams.push(['idp_ids[]', idp_id] as QueryParam<string, string>);
-      });
-    }
+  if (domain !== undefined && domain.trim() !== '') {
+    queryParams.push(['domain', domain] as QueryParam<string, string>);
   }
+  return urlBuilder([cryptrBaseUrl], queryParams);
+};
+
+export const emailGatewayUrl = (
+  config: PreparedCryptrConfig,
+  transaction: Transaction,
+  email: string
+) => {
+  const { client_id, cryptr_base_url, dedicated_server, tenant_domain } =
+    config;
+  const cryptrBaseUrl = dedicated_server
+    ? cryptr_base_url
+    : [cryptr_base_url, 't', tenant_domain, ''].join('/');
+  const locale = transaction.locale || config.default_locale || Locale.EN;
+  const {
+    redirectUri,
+    scope,
+    pkce: { state: clientState, codeChallenge, codeChallengeMethod },
+  } = transaction;
+  let queryParams = [
+    ['client_id', client_id] as QueryParam<string, string>,
+    ['locale', locale] as QueryParam<string, string>,
+    ['scope', scope] as QueryParam<string, string>,
+    ['client_state', clientState] as QueryParam<string, string>,
+    ['redirect_uri', redirectUri] as QueryParam<string, string>,
+    ['code_challenge', codeChallenge] as QueryParam<string, string>,
+    ['code_challenge_method', codeChallengeMethod] as QueryParam<
+      string,
+      string
+    >,
+    ['email', email] as QueryParam<string, string>,
+  ];
   return urlBuilder([cryptrBaseUrl], queryParams);
 };
 

@@ -9,9 +9,10 @@ import {
   refreshTokenUrl,
   revokeTokenUrl,
   sloAfterRevokeTokenUrl,
-  ssoSignUrl,
-  ssoGatewayUrl,
   tokenUrl,
+  universalTokenUrl,
+  domainGatewayUrl,
+  emailGatewayUrl,
 } from '../utils/apiHelpers';
 import { CryptrReducerActionKind, Sign } from '../utils/enums';
 import type {
@@ -30,6 +31,7 @@ import {
   prepareConfig,
   refreshBody,
   tokensBody,
+  universalTokensBody,
 } from '../utils/helpers';
 import { DeviceEventEmitter } from 'react-native';
 import Jwt from '../utils/jwt';
@@ -126,8 +128,25 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     callback?: (data: any) => any
   ) => {
     let body = tokensBody(transaction, params, config);
+    const tokenURL = tokenUrl(config, params, transaction);
+    jsonApiRequest(tokenURL, body)
+      .then((resp) => resp.json())
+      .then((json) => {
+        handleNewTokens(json, callback);
+      })
+      .catch((error) => {
+        setError(error);
+      });
+  };
 
-    jsonApiRequest(tokenUrl(config, params, transaction), body)
+  const getUniversalTokens = (
+    params: any,
+    transaction: Transaction,
+    callback?: (data: any) => any
+  ) => {
+    let body = universalTokensBody(transaction, params, config);
+    const tokenURL = universalTokenUrl(config, params.organization_domain);
+    jsonApiRequest(tokenURL, body)
       .then((resp) => resp.json())
       .then((json) => {
         handleNewTokens(json, callback);
@@ -144,25 +163,29 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     return (incomeUri: string) => {
       try {
         let params = extractParamsFromUri(incomeUri);
-        getTokens(params, transaction, callback);
+        if (params.request_id) {
+          getUniversalTokens(params, transaction, callback);
+        } else {
+          getTokens(params, transaction, callback);
+        }
       } catch (error) {
         setError(error);
       }
     };
   };
 
-  const signInWithSSO = (
-    idpId: string,
+  const signInWithDomain = (
+    domain?: string,
     successCallback?: (data: any) => any,
     errorCallback?: (data: any) => any
   ) => {
-    let ssoTransaction = new Transaction(config.default_redirect_uri, Sign.SSO);
-    let ssoUrl = ssoSignUrl(config, ssoTransaction, idpId);
+    let transaction = new Transaction(config.default_redirect_uri, Sign.SSO);
+    let uri = domainGatewayUrl(config, transaction, domain);
     setLoading();
     Cryptr.startSecuredView(
-      ssoUrl,
+      uri,
       config.no_popup_no_cookie,
-      handleRedirectCalback(ssoTransaction, successCallback),
+      handleRedirectCalback(transaction, successCallback),
       (error: any) => {
         setError(error);
         errorCallback && errorCallback(error);
@@ -170,18 +193,18 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     );
   };
 
-  const signInWithSSOGateway = (
-    idpId?: string | string[],
+  const signInWithEmail = (
+    email: string,
     successCallback?: (data: any) => any,
     errorCallback?: (data: any) => any
   ) => {
-    let ssoTransaction = new Transaction(config.default_redirect_uri, Sign.SSO);
-    let ssoGatewayURL = ssoGatewayUrl(config, ssoTransaction, idpId);
+    let transaction = new Transaction(config.default_redirect_uri, Sign.SSO);
+    let uri = emailGatewayUrl(config, transaction, email);
     setLoading();
     Cryptr.startSecuredView(
-      ssoGatewayURL,
+      uri,
       config.no_popup_no_cookie,
-      handleRedirectCalback(ssoTransaction, successCallback),
+      handleRedirectCalback(transaction, successCallback),
       (error: any) => {
         setError(error);
         errorCallback && errorCallback(error);
@@ -355,16 +378,6 @@ const CryptrProvider: React.FC<ProviderProps> = ({
       value={{
         ...state,
         config: () => config,
-        signinWithSSO: (
-          idpId: string,
-          successCallback?: (data: any) => any,
-          errorCallback?: (data: any) => any
-        ) => signInWithSSO(idpId, successCallback, errorCallback),
-        signinWithSSOGateway: (
-          idpId?: string | string[],
-          successCallback?: (data: any) => any,
-          errorCallback?: (data: any) => any
-        ) => signInWithSSOGateway(idpId, successCallback, errorCallback),
         logOut: (
           successCallback?: (data: any) => any,
           errorCallback?: (error: any) => any
@@ -374,6 +387,16 @@ const CryptrProvider: React.FC<ProviderProps> = ({
         user: () => getUser(),
         decoratedRequest: (input: RequestInfo, init?: RequestInit) =>
           decoratedRequest(input, init),
+        signInWithDomain: (
+          domain?: string,
+          successCallback?: (data: any) => any,
+          errorCallback?: (data: any) => any
+        ) => signInWithDomain(domain, successCallback, errorCallback),
+        signInWithEmail: (
+          email: string,
+          successCallback?: (data: any) => any,
+          errorCallback?: (data: any) => any
+        ) => signInWithEmail(email, successCallback, errorCallback),
       }}
     >
       {children}

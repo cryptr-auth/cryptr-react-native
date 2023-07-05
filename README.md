@@ -4,7 +4,9 @@ React Native SDK for Cryptr Authentication through SSO
 
 ## Summary
 
-  - [Expo](#expo)
+- [@cryptr/cryptr-react-native](#cryptrcryptr-react-native)
+  - [Summary](#summary)
+  - [Expo integration](#expo-integration)
   - [Prerequisites](#prerequisites)
     - [Android](#android)
     - [iOS](#ios)
@@ -14,8 +16,18 @@ React Native SDK for Cryptr Authentication through SSO
     - [3 - Android](#3---android)
   - [Usage](#usage)
     - [Basis](#basis)
-      - [iOS Alert dialog](#ios-alert-dialog-on-sso-log-in)
+      - [iOS Alert dialog on SSO log in](#ios-alert-dialog-on-sso-log-in)
     - [Hooks](#hooks)
+      - [isAuthenticated](#isauthenticated)
+      - [user](#user)
+      - [accessToken](#accesstoken)
+      - [idToken](#idtoken)
+      - [signInWithDomain](#signinwithdomain)
+      - [signInWithEmail](#signinwithemail)
+      - [refreshTokens](#refreshtokens)
+      - [logOut](#logout)
+      - [error](#error)
+      - [isLoading](#isloading)
     - [Components](#components)
 
 ## Expo integration
@@ -185,33 +197,34 @@ const { idToken } = useCryptr()
 
 Actions
 
-#### signinWithSSO
+#### signInWithDomain
 
-Hook action to sign in the user using a specific SSO.
-*Requires* `idpId` value.
-
+Hook action to sign in the user using his organization's domain.
 
 ```js
-const { signinWithSSO } = useCryptr()
+const { signInWithDomain } = useCryptr();
 
-// [...]
-signinWithSSO(idpID: string, successCallback?: (data: any) => any, errorCallback?: (data: any) => any)
+// Signature
+signInWithDomain(domain?: string, successCallback? (data: any) => any, errorCallback?: (data: any) => any)
+
+// Sign in for domain `company-dot-io`
+signInWithDomain('company-dot-io')
 ```
 
-#### signinWithSSOGateway
+💡 If you do not provide value for `domain` user will be asked to input his email address and regarding to your organizations configuration he will be redirected to proper authentication process.
 
-Hook action to sign in the user using Cryptr Gateway when you don't know what is the precise ID used by your end user. You can precise a subset of IDP_ID that the user will be able to consume if none is provided, the end-user will be able to find his by email or organziation_domain.
+#### signInWithEmail
 
-When you set one string for `idpId` behavior is the same as `signinWithSSO``
-
-:warning: requires a proper setup of your different organizations
-
+Hook action to sign in the user using his business email. *Requires* `email` value.
 
 ```js
-const { signinWithSSOGateway } = useCryptr()
+const { signInWithEmail } = useCryptr();
 
-// [...]
-signinWithSSOGateway(idpID?: string | string[], successCallback?: (data: any) => any, errorCallback?: (data: any) => any)
+// Signature
+signInWithEmail(email: string, successCallback? (data: any) => any, errorCallback?: (data: any) => any)
+
+// Sign in for email `john@company.io`
+signInWithEmail('john@company.io')
 ```
 
 #### refreshTokens
@@ -264,8 +277,6 @@ const { isLoading } = useCryptr()
 
 This SDK also includes Components to simplify your integration.
 
-- `SsoSigInButton` to login using SSO (hides when session is already active [`autoHide={false}` to disable])
-
-- `SsoGatewayButton` to login using SSO Gateway (hides when session is already active [`autoHide={false}` to disable])
+- `CryptrGatewayButton` to log in either with domain or email  (hides when session is already active [`autoHide={false}` to disable])
 - `LogOutButton` to logout user (hides when no session is active [`autoHide={false}` to disable])
 - `RefreshButton` to get new tokens (hides when session is already active [`autoHide={false}` to disable])

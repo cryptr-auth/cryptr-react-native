@@ -10,13 +10,13 @@ const error = (...args: any) => {
 const initialContext = {
   ...initialCryptrState,
   config: error as unknown as () => CryptrConfig,
-  signinWithSSO: error as unknown as (
-    idpId: string,
+  signInWithDomain: error as unknown as (
+    domain?: string,
     successCallback?: (data: any) => any,
     errorCallback?: (data: any) => any
   ) => void,
-  signinWithSSOGateway: error as unknown as (
-    idpId?: string | string[],
+  signInWithEmail: error as unknown as (
+    email: string,
     successCallback?: (data: any) => any,
     errorCallback?: (data: any) => any
   ) => void,

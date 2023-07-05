@@ -52,6 +52,28 @@ export const tokensBody = (
   });
 };
 
+export const universalTokensBody = (
+  transaction: Transaction,
+  params: any,
+  config: PreparedCryptrConfig
+) => {
+  const {
+    nonce,
+    pkce: { codeVerifier, state },
+  } = transaction;
+  const { code, request_id } = params;
+  const { client_id } = config;
+  return JSON.stringify({
+    grant_type: 'authorization_code',
+    client_id: client_id,
+    code: code,
+    code_verifier: codeVerifier,
+    nonce: nonce,
+    request_id: request_id,
+    client_state: state,
+  });
+};
+
 export const logOutBody = (
   accessToken?: string,
   refreshToken?: string
@@ -126,10 +148,10 @@ export const canProcessSloCode = (
   platform = Platform.OS
 ): boolean => {
   let ips = access_token_fields.ips;
+  console.debug(ips);
   return (
-    slo_code !== undefined &&
-    slo_code !== '' &&
-    platform !== 'ios' &&
-    ips !== 'google'
+    slo_code !== undefined && slo_code !== '' && platform !== 'ios'
+    // &&
+    // ips !== 'google'
   );
 };

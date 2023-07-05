@@ -3,14 +3,11 @@ import { Button, Text } from 'react-native';
 import {
   LogOutButton,
   RefreshButton,
-  SsoGatewayButton,
-  SsoSignInButton,
   useCryptr,
 } from '@cryptr/cryptr-react-native';
 import { styles } from '../styles';
 import HorizontalDivider from './HorizontalDivider';
 import TokenView from './TokenView';
-import { IDP_ID } from '../../cryptrConfig.template';
 
 const AuthenticatedView = () => {
   const { accessToken, decoratedRequest, user } = useCryptr();
@@ -42,7 +39,6 @@ const AuthenticatedView = () => {
       .then((data) => console.debug(data))
       .catch((error) => console.error(error));
   };
-
   return (
     <>
       <Text style={styles.textAuthenticated}>You're logged in</Text>
@@ -57,12 +53,9 @@ const AuthenticatedView = () => {
       {accessToken && <TokenView title="Access Token" value={accessToken} />}
       {user() && <TokenView title="User" value={JSON.stringify(user())} />}
       <HorizontalDivider />
-      <SsoGatewayButton text="Gateway" />
-      <SsoSignInButton idpId={IDP_ID} autoHide={false} />
       <LogOutButton
         successCallback={logOutCallback}
         errorCallback={logOutErrorCallback}
-        buttonTextStyle={styles.textLogOut}
       />
       <RefreshButton
         successCallback={refreshCallback}

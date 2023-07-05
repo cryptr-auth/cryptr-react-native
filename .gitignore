@@ -67,3 +67,4 @@ coverage/
 
 *.env*
 *cryptrConfig.local*
+*cryptrConfig.template.tsx
