@@ -277,6 +277,6 @@ const { isLoading } = useCryptr()
 
 This SDK also includes Components to simplify your integration.
 
-- `SsoSigInButton` to login using SSO (hides when session is already active [`autoHide={false}` to disable])
+- `CryptrGatewayButton` to log in either with domain or email  (hides when session is already active [`autoHide={false}` to disable])
 - `LogOutButton` to logout user (hides when no session is active [`autoHide={false}` to disable])
 - `RefreshButton` to get new tokens (hides when session is already active [`autoHide={false}` to disable])
