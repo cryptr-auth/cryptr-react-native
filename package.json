@@ -42,7 +42,8 @@
     "ios",
     "android",
     "authentication",
-    "gateway"
+    "gateway",
+    "saml"
   ],
   "repository": "https://github.com/cryptr-auth/cryptr-react-native.git",
   "author": "Cryptr <thibaud@cryptr.co> (https://www.cryptr.co)",
