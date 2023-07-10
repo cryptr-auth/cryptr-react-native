@@ -27,7 +27,7 @@
     "typescript": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "prepare": "bob build",
-    "release": "release-it",
+    "release": "npm login && npm ping && npm whoami && release-it",
     "example": "yarn --cwd example",
     "ios:example": "cd example && yarn ios",
     "android:example": "cd example && yarn android",
