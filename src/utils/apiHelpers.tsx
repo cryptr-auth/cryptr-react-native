@@ -15,7 +15,7 @@ const urlBuilder = (
   let url = new URL(urlParts.join('/'));
   if (queryParams) {
     queryParams.forEach((queryParam) => {
-      url.searchParams.append(queryParam[0], encodeURIComponent(queryParam[1]));
+      url.searchParams.append(queryParam[0], queryParam[1]);
     });
   }
 
