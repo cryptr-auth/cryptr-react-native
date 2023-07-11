@@ -97,7 +97,8 @@
     ],
     "setupFilesAfterEnv": [
       "@testing-library/jest-native/extend-expect"
-    ]
+    ],
+    "timers": "fake"
   },
   "commitlint": {
     "extends": [
