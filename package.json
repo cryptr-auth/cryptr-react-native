@@ -1,6 +1,6 @@
 {
   "name": "@cryptr/cryptr-react-native",
-  "version": "0.3.0-alpha",
+  "version": "0.3.0",
   "description": "React Native SDK for Cryptr Authentication",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -27,7 +27,7 @@
     "typescript": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "prepare": "bob build",
-    "release": "release-it",
+    "release": "npm login && npm ping && npm whoami && release-it",
     "example": "yarn --cwd example",
     "ios:example": "cd example && yarn ios",
     "android:example": "cd example && yarn android",
@@ -97,7 +97,8 @@
     ],
     "setupFilesAfterEnv": [
       "@testing-library/jest-native/extend-expect"
-    ]
+    ],
+    "timers": "fake"
   },
   "commitlint": {
     "extends": [

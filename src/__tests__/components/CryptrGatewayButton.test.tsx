@@ -354,7 +354,7 @@ describe('CryptrGatewayButton', () => {
       expect.anything()
     );
     expect(startSecuredViewFn).toHaveBeenCalledWith(
-      expect.stringContaining('email=john%2540company-domain.com'),
+      expect.stringContaining('email=john%40company-domain.com'),
       false,
       expect.anything(),
       expect.anything()

@@ -11,21 +11,14 @@ on:
 
 jobs:
   build:
-
+    name: Lint + Test + build
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Using Node.js 16.4.0
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+        node-version: 16.4.0
     - name: Install dependencies
       run: yarn --prefer-offline
     - name: Linting

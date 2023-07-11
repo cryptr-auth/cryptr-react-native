@@ -161,7 +161,7 @@ describe('apiHelpers#sloAfterRevokeTokenUrl/2', () => {
     let url = sloAfterRevokeTokenUrl(config, sloCode);
 
     expect(url).toEqual(
-      'https://cryptr.authent.me/api/v1/tenants/shark-academy/123-aze/oauth/token/slo-after-revoke-token?slo_code=remove_me&target_url=cryptr%253A%252F%252Fapp'
+      'https://cryptr.authent.me/api/v1/tenants/shark-academy/123-aze/oauth/token/slo-after-revoke-token?slo_code=remove_me&target_url=cryptr%3A%2F%2Fapp'
     );
   });
 });
