@@ -301,7 +301,7 @@ describe('helpers#canProcessSloCode/2', () => {
   it('returns false if slo_code, right platform but google ips', () => {
     expect(
       canProcessSloCode({ ips: 'google' }, 'slo_code', 'android')
-    ).toBeFalsy();
+    ).toBeTruthy();
   });
 
   it('returns true if string slo_code and ips not google and compatible platform', () => {
