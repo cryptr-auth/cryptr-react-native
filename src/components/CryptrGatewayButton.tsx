@@ -3,26 +3,7 @@ import { Locale, useCryptr } from '..';
 import { Pressable, Text, View } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { defaultStyles } from '../utils/defaultStypes';
-
-const checkEmailValue = (emailValue: string) => {
-  if (emailValue.trim() === '') {
-    throw new Error('Please provide non blank string for email');
-  }
-  if (!/^[a-zA-Z0-9+]+@(?:[a-zA-Z0-9-]+\.)+[A-Za-z]+$/.test(emailValue)) {
-    throw new Error('Please provide valid email');
-  }
-  return emailValue;
-};
-
-const checkDomainValue = (domainValue?: string) => {
-  if (domainValue !== undefined && domainValue?.trim() !== '') {
-    if (!/^[a-z0-9-]*$/.test(domainValue)) {
-      throw new Error(
-        'Please provide valid domain (alphanumeric dashed separated)'
-      );
-    }
-  }
-};
+import { checkDomainValue, checkEmailValue } from '../utils/helpers';
 
 type GatewayProps = {
   domain?: string;
