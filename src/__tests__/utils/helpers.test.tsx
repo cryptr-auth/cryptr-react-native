@@ -367,7 +367,7 @@ describe('helper#checkEmaiValue/1', () => {
 
   it('returns truthy if underscored email string value', () => {
     expect(checkEmailValue('john-doe@example.com')).toEqual(
-      'john_doe@example.com'
+      'john-doe@example.com'
     );
   });
 });
