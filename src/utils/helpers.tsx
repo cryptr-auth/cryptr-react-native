@@ -163,7 +163,7 @@ export const checkEmailValue = (emailValue: string) => {
     throw new Error('Please provide non blank string for email');
   }
   if (
-    !/^[a-z0-9]+\.?[a-z0-9]+@(?:[a-zA-Z0-9-]+\.)+[A-Za-z]+$/.test(emailValue)
+    !/^[a-z0-9]+[-_.]?[a-z0-9]+@(?:[a-zA-Z0-9-]+\.)+[A-Za-z]+$/.test(emailValue)
   ) {
     throw new Error('Please provide valid email');
   }

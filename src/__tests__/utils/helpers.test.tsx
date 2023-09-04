@@ -358,6 +358,18 @@ describe('helper#checkEmaiValue/1', () => {
       'Please provide valid email'
     );
   });
+
+  it('returns truthy if tiret email string value', () => {
+    expect(checkEmailValue('john-doe@example.com')).toEqual(
+      'john-doe@example.com'
+    );
+  });
+
+  it('returns truthy if underscored email string value', () => {
+    expect(checkEmailValue('john-doe@example.com')).toEqual(
+      'john_doe@example.com'
+    );
+  });
 });
 
 describe('helpers#checkDomainValue/1', () => {
