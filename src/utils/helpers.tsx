@@ -157,3 +157,27 @@ export const canProcessSloCode = (
     // ips !== 'google'
   );
 };
+
+export const checkEmailValue = (emailValue: string) => {
+  if (emailValue.trim() === '') {
+    throw new Error('Please provide non blank string for email');
+  }
+  if (
+    !/^[a-z0-9]+[-_.]?[a-z0-9]+@(?:[a-zA-Z0-9-]+\.)+[A-Za-z]+$/.test(emailValue)
+  ) {
+    throw new Error('Please provide valid email');
+  }
+  return emailValue;
+};
+
+export const checkDomainValue = (domainValue?: string) => {
+  if (domainValue === undefined || domainValue.trim() === '') {
+    throw new Error('Please provide non blank string for domain');
+  }
+  if (!/^[a-z0-9-]*$/.test(domainValue)) {
+    throw new Error(
+      'Please provide valid domain (alphanumeric dashed separated)'
+    );
+  }
+  return domainValue;
+};

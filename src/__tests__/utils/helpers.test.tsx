@@ -1,6 +1,8 @@
 import Transaction from '../../models/Transaction';
 import {
   canProcessSloCode,
+  checkDomainValue,
+  checkEmailValue,
   extractParamsFromUri,
   logOutBody,
   prepareConfig,
@@ -314,5 +316,82 @@ describe('helpers#canProcessSloCode/2', () => {
     expect(
       canProcessSloCode({ ips: 'cryptr' }, 'slo_code', 'macos')
     ).toBeTruthy();
+  });
+});
+
+describe('helper#checkEmaiValue/1', () => {
+  it('returns false if empty string value', () => {
+    expect(() => checkEmailValue('')).toThrowError(
+      'Please provide non blank string for email'
+    );
+  });
+  it('returns false if wrong string value', () => {
+    expect(() => checkEmailValue('azerty')).toThrowError(
+      'Please provide valid email'
+    );
+  });
+
+  it('returns false if @ string value', () => {
+    expect(() => checkEmailValue('@')).toThrowError(
+      'Please provide valid email'
+    );
+  });
+
+  it('returns true if simple string value', () => {
+    expect(checkEmailValue('john@example.com')).toEqual('john@example.com');
+  });
+
+  it('returns true if dotted email string value', () => {
+    expect(checkEmailValue('john.doe@example.com')).toEqual(
+      'john.doe@example.com'
+    );
+  });
+
+  it('returns false if ending first part with dots email string value', () => {
+    expect(() => checkEmailValue('wrong..@example.com')).toThrowError(
+      'Please provide valid email'
+    );
+  });
+
+  it('returns false if alias email string value', () => {
+    expect(() => checkEmailValue('john+alias@example.com')).toThrowError(
+      'Please provide valid email'
+    );
+  });
+
+  it('returns truthy if tiret email string value', () => {
+    expect(checkEmailValue('john-doe@example.com')).toEqual(
+      'john-doe@example.com'
+    );
+  });
+
+  it('returns truthy if underscored email string value', () => {
+    expect(checkEmailValue('john-doe@example.com')).toEqual(
+      'john-doe@example.com'
+    );
+  });
+});
+
+describe('helpers#checkDomainValue/1', () => {
+  it('should throw error if empy input', () => {
+    expect(() => checkDomainValue(' ')).toThrowError(
+      'Please provide non blank string for domain'
+    );
+  });
+
+  it('should throw error if underscored input', () => {
+    expect(() => checkDomainValue('_')).toThrowError(
+      'Please provide valid domain (alphanumeric dashed separated)'
+    );
+  });
+
+  it('should throw error if standard account complex name input', () => {
+    expect(() => checkDomainValue("My awesome Company's name")).toThrowError(
+      'Please provide valid domain (alphanumeric dashed separated)'
+    );
+  });
+
+  it('should return value if proper domain input', () => {
+    expect(checkDomainValue('communitiz-app')).toEqual('communitiz-app');
   });
 });
