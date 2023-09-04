@@ -2,11 +2,14 @@
 
 React Native SDK for Cryptr Authentication through SSO
 
+Current version: `0.3.1`
+
 ## Summary
 
 - [@cryptr/cryptr-react-native](#cryptrcryptr-react-native)
   - [Summary](#summary)
   - [Expo integration](#expo-integration)
+    - [Cryptr Expo plugin for Android](#cryptr-expo-plugin-for-android)
   - [Prerequisites](#prerequisites)
     - [Android](#android)
     - [iOS](#ios)
@@ -32,7 +35,26 @@ React Native SDK for Cryptr Authentication through SSO
 
 ## Expo integration
 
-:warning: this is not compatible with Expo Go (neither `link`) and requires a run (`expo run`)
+:warning: this is straightforward compatible with Expo
+
+Here is an example of a plugin to be compatible with Expo for Android manifest configuration
+
+### Cryptr Expo plugin for Android
+
+```js
+const { withAppBuildGradle } = require("@expo/config-plugins");
+​
+module.exports = function withAndroidStrategiesPlugin(config) {
+  return withAppBuildGradle(config, (config) => {
+    config.modResults.contents = config.modResults.contents.replace(
+      "targetSdkVersion rootProject.ext.targetSdkVersion",
+      'targetSdkVersion rootProject.ext.targetSdkVersion\n        manifestPlaceholders = [cryptrDomain: YOUR-DOMAIN, cryptrScheme: "cryptr"]'
+    );
+​
+    return config;
+  });
+};
+```
 
 ## Prerequisites
 
