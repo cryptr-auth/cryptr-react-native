@@ -2,6 +2,8 @@
 
 React Native SDK for Cryptr Authentication through SSO
 
+Current version: `0.3.1`
+
 ## Summary
 
 - [@cryptr/cryptr-react-native](#cryptrcryptr-react-native)
