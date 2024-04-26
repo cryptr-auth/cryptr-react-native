@@ -35,7 +35,6 @@ const CryptrGatewayButton = ({
     signInWithEmail,
   } = useCryptr();
 
-  console.log('email: ', email, 'domain: ', domain);
   email !== undefined ? checkEmailValue(email) : checkDomainValue(domain);
 
   const textValue = (): string => {
