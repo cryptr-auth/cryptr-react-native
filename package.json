@@ -21,6 +21,9 @@
     "!**/__fixtures__",
     "!**/__mocks__"
   ],
+  "config": {
+    "iphone_simulator": "iPhone 15"
+  },
   "scripts": {
     "test": "jest",
     "test:ci": "jest --coverage",
@@ -30,6 +33,7 @@
     "release": "npm login && npm ping && npm whoami && release-it",
     "example": "yarn --cwd example",
     "ios:example": "cd example && yarn ios",
+    "ios:example:with_simulator": "cd example && yarn ios --simulator=\"$npm_package_config_iphone_simulator\"",
     "android:example": "cd example && yarn android",
     "pods": "cd example && pod-install --quiet",
     "bootstrap": "yarn example && yarn && yarn pods"
