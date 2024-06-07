@@ -20,7 +20,7 @@ jobs:
       with:
         node-version: 16.4.0
     - name: Install dependencies
-      run: yarn --cached
+      run: yarn add --cached
     - name: Linting
       run: yarn lint
     - name: Test
