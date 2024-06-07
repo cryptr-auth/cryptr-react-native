@@ -1,0 +1,16 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.cryptr.cryptrreactnative">
+  <application>
+    <activity
+      android:name="com.cryptr.cryptrreactnative.CryptrAuthActivity"
+      android:exported="true">
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+
+        <data android:host="2024-app" android:scheme="cryptr" />
+      </intent-filter>
+    </activity>
+  </application>
+</manifest>
