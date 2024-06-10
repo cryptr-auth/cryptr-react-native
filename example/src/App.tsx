@@ -13,7 +13,7 @@ import {
   REACT_APP_CRYPTR_DEFAULT_LOCALE,
 } from '@env';
 
-const config: CryptrConfig = {
+const cryptrConfig: CryptrConfig = {
   accountDomain: REACT_APP_CRYPTR_ACCOUNT_DOMAIN,
   clientId: REACT_APP_CRYPTR_CLIENT_ID,
   cryptrServiceUrl: REACT_APP_CRYPTR_SERVICE_URL,
@@ -24,13 +24,9 @@ const config: CryptrConfig = {
   defaultLocale: REACT_APP_CRYPTR_DEFAULT_LOCALE,
 };
 
-console.debug(config);
-console.debug(REACT_APP_CRYPTR_ACCOUNT_DOMAIN);
-console.debug(process.env);
-
 export default function App() {
   return (
-    <CryptrProvider {...config}>
+    <CryptrProvider {...cryptrConfig}>
       <HomeScreen />
     </CryptrProvider>
   );

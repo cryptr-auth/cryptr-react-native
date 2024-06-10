@@ -1,5 +1,6 @@
 {
   "name": "@cryptr/cryptr-react-native-example",
+  "description": "Example app for @cryptr/cryptr-react-native",
   "version": "0.0.1",
   "private": true,
   "scripts": {
