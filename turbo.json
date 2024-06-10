@@ -5,6 +5,7 @@
       "inputs": [
         "package.json",
         "android",
+        "!node_modules",
         "!android/build",
         "src/*.ts",
         "src/*.tsx",
