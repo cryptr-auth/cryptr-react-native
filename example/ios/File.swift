@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  CryptrReactNativeExample
+//  CryptrExample
 //
 
 import Foundation
