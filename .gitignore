@@ -80,3 +80,6 @@ lib/
 example/.yarn
 
 .env
+
+
+coverage/

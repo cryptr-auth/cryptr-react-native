@@ -65,20 +65,8 @@ export const universalTokenUrl = (
   return urlBuilder(urlParts);
 };
 
-type QueryParam<T, K> = [T, K];
-type QueryParams<T, K> = QueryParam<T, K>[];
-
-const urlBuilder = (
-  urlParts: Array<string>,
-  queryParams?: QueryParams<string, string>
-): string => {
+const urlBuilder = (urlParts: Array<string>): string => {
   let url = new URL(urlParts.join('/'));
-  if (queryParams) {
-    queryParams.forEach((queryParam) => {
-      url.searchParams.append(queryParam[0], queryParam[1]);
-    });
-  }
-
   return url.href;
 };
 

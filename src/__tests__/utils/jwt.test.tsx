@@ -1,6 +1,12 @@
 import type { PreparedCryptrConfig } from '../../utils/interfaces';
 import Jwt from '../../utils/jwt';
-import { SUCCESSFULL_TOKEN_RESPONSE } from '../mocks/mockData';
+import {
+  EXPIRED_TOKEN,
+  MISSING_KEY_TOKEN,
+  SUCCESSFULL_TOKEN_RESPONSE,
+  WRONG_EXP,
+  WRONG_IAT,
+} from '../mocks/mockData';
 
 const config: PreparedCryptrConfig = {
   cryptrServiceUrl: 'http://lvh.me:4000',
@@ -49,6 +55,36 @@ describe('Jwt.validatesAccessToken/2', () => {
       })
     ).toThrow(
       'Audience (aud) http://localhost:8000 claim is not compliant with http://azerty.com from config'
+    );
+  });
+
+  test('should fail if expired token', () => {
+    expect(() => Jwt.validatesAccessToken(EXPIRED_TOKEN, config)).toThrow(
+      'Expiration (exp) is invalid, (1718030693000) must be in the future'
+    );
+  });
+
+  test('should fail if not a JWT', () => {
+    expect(() => Jwt.validatesAccessToken('EXPIRED_TOKEN', config)).toThrow(
+      'Invalid token specified: missing part #2'
+    );
+  });
+
+  test('should fail if missing claim in JWT', () => {
+    expect(() => Jwt.validatesAccessToken(MISSING_KEY_TOKEN, config)).toThrow(
+      'jtt is missing'
+    );
+  });
+
+  test('should fail if wrong exp', () => {
+    expect(() => Jwt.validatesAccessToken(WRONG_EXP, config)).toThrow(
+      'Expiration Time (exp) claim must be a present number'
+    );
+  });
+
+  test('should fail if wrong iat', () => {
+    expect(() => Jwt.validatesAccessToken(WRONG_IAT, config)).toThrow(
+      'Issued at (iat) claim must be a present number'
     );
   });
 });
