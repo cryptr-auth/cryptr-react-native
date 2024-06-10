@@ -29,28 +29,32 @@ export type MetadataType = {
   [key: string]: any;
 };
 
+export type Identity = {
+  idp_id: string;
+  authenticated_at: number;
+  provider: string;
+  data?: MetadataType;
+};
+
 export type CryptrUser = {
-  application_metadata?: MetadataType;
   at_hash: string;
   aud: string;
   c_hash: string;
-  cid: string;
-  dbs?: string;
   email: string;
+  email_verified: boolean;
+  env?: string;
   exp: number;
-  family_name?: string;
-  given_name?: string;
   iat: number;
-  iss: string;
+  identities: Identity[];
+  idp_user_id?: string;
   jti: string;
   jtt: string;
   nonce: string;
-  resource_owner_metadata?: MetadataType;
-  s_hash?: string;
-  scp: string[];
+  meta_data?: MetadataType;
+  org: string;
+  phone_number_verified: boolean;
+  profile?: MetadataType;
+  scp?: string[];
   sub: string;
-  tnt: string;
-  sci?: string;
-  ips?: string;
   ver: number;
 };

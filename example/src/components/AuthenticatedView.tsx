@@ -15,10 +15,12 @@ const AuthenticatedView = () => {
     duration: number = ToastAndroid.SHORT
   ) => {
     console.debug(title, message);
+    const messageToDisplay =
+      typeof message === 'object' ? JSON.stringify(message, null, 2) : message;
     if (Platform.OS === 'android') {
-      ToastAndroid.show(String(message), duration);
+      ToastAndroid.show(String(messageToDisplay), duration);
     } else {
-      Alert.alert(String(message));
+      Alert.alert(String(messageToDisplay));
     }
   };
 
@@ -44,9 +46,12 @@ const AuthenticatedView = () => {
       <HorizontalDivider />
       {user() && (
         <>
-          <TokenView title={user()!.tnt} value={`Issued at ${user()!.iat}`} />
-          <TokenView title={'SCI'} value={user()!.sci || '?'} />
-          <TokenView title={'IPS'} value={user()!.ips || '?'} />
+          <TokenView title={user()!.org} value={`Issued at ${user()!.iat}`} />
+          <TokenView title={'Env'} value={user()!.env || '?'} />
+          <TokenView
+            title={'Identities'}
+            value={JSON.stringify(user()?.identities, null, 2)}
+          />
         </>
       )}
       {accessToken && <TokenView title="Access token" value={accessToken} />}
