@@ -1,222 +1,326 @@
-import type { PreparedCryptrConfig } from '../../utils/interfaces';
+import Transaction from '../../oauth/Transaction';
 import {
-  decoratedRequestInit,
-  refreshTokenUrl,
-  revokeTokenUrl,
-  sloAfterRevokeTokenUrl,
-  tokenUrl,
+  signInUrl,
+  domainUrl,
+  emailUrl,
   universalTokenUrl,
+  universalTokensBody,
+  logOutBody,
+  revokeTokenUrl,
+  refreshBody,
+  refreshTokenUrl,
+  jsonApiRequest,
 } from '../../utils/apiHelpers';
-import Transaction from '../../models/Transaction';
-import { Sign } from '../..';
+import { Locale } from '../../utils/enums';
+import type { PreparedCryptrConfig } from '../../utils/interfaces';
 
-describe('apiHelpers#decoratedRequest/2', () => {
-  test('should not decorate if no token', () => {
-    let decoratedInit = decoratedRequestInit();
-    expect(decoratedInit).toBeUndefined();
-  });
+import type { FetchMock } from 'jest-fetch-mock';
 
-  test('should unchange init if no token', () => {
-    let decoratedInit = decoratedRequestInit(undefined, {
-      headers: { 'x-Admin': 'myself' },
-      method: 'PUT',
-    });
-    expect(decoratedInit).toEqual({
-      headers: { 'x-Admin': 'myself' },
-      method: 'PUT',
-    });
-  });
+const fetchMock = fetch as FetchMock;
 
-  test('should decorate if token', () => {
-    let decoratedInit = decoratedRequestInit('ey1242.fre');
-    expect(decoratedInit).toEqual({
-      headers: { Authorization: 'Bearer ey1242.fre' },
-    });
-  });
+const dedicatedConfig: PreparedCryptrConfig = {
+  cryptrServiceUrl: 'https://cryptr.authent.me',
+  dedicatedServer: true,
+  accountDomain: 'communitiz-app',
+  clientId: '0e0abbad-b214-47ed-9570-dc531ea21422',
+  noPopupNoCookie: false,
+  audience: 'cryptr://mobile-app',
+  defaultRedirectUri: 'cryptr://mobile-app',
+};
 
-  test('should merge with init if token', () => {
-    let decoratedInit = decoratedRequestInit('ey1242.fre', { method: 'PUT' });
-    expect(decoratedInit).toEqual({
-      headers: { Authorization: 'Bearer ey1242.fre' },
-      method: 'PUT',
-    });
-  });
+const sharedConfig: PreparedCryptrConfig = {
+  ...dedicatedConfig,
+  dedicatedServer: false,
+};
 
-  test('should merge headers with inits if token', () => {
-    let decoratedInit = decoratedRequestInit('ey1242.fre', {
-      headers: { 'x-Admin': 'myself' },
-      method: 'PUT',
-    });
-    expect(decoratedInit).toEqual({
-      headers: { 'Authorization': 'Bearer ey1242.fre', 'x-Admin': 'myself' },
-      method: 'PUT',
-    });
-  });
-
-  test('should override Auth header with inits if token', () => {
-    let decoratedInit = decoratedRequestInit('ey1242.fre', {
-      headers: { Authorization: 'myself' },
-      method: 'PUT',
-    });
-    expect(decoratedInit).toEqual({
-      headers: { Authorization: 'Bearer ey1242.fre' },
-      method: 'PUT',
-    });
-  });
-});
-
-describe('apiHelpers#tokenUrl/3', () => {
-  const config: PreparedCryptrConfig = {
-    cryptr_base_url: 'https://cryptr.authent.me',
-    tenant_domain: 'shark-academy',
-    client_id: '123-aze',
-    audience: 'cryptr://app',
-    default_redirect_uri: 'cryptr://app',
-    dedicated_server: false,
-    no_popup_no_cookie: false,
-  };
-  const authorization = { authorization_id: 'azerty' };
-
-  it('should return signin token url if sample transaction', () => {
-    const transaction = new Transaction(config.default_redirect_uri);
-    let url = tokenUrl(config, authorization, transaction);
-
-    expect(url).toEqual(
-      `https://cryptr.authent.me/api/v1/tenants/shark-academy/123-aze/${transaction.pkce.state}/oauth/signin/client/${authorization.authorization_id}/token`
+describe('apiHelpers#signUrl/', () => {
+  test('should return proper dedicated sign URL', () => {
+    let transaction = new Transaction(
+      Locale.EN,
+      dedicatedConfig.defaultRedirectUri
+    );
+    let signUrl = signInUrl(dedicatedConfig, transaction);
+    let parsedSignUrl = new URL(signUrl);
+    expect(parsedSignUrl.hostname).toEqual('cryptr.authent.me');
+    expect(parsedSignUrl.pathname).toEqual('/');
+    expect(parsedSignUrl.searchParams).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('client_state')).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('scope')).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('code_challenge')).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('client_id')).toEqual(
+      dedicatedConfig.clientId
+    );
+    expect(parsedSignUrl.searchParams.get('locale')).toEqual('en');
+    expect(parsedSignUrl.searchParams.get('code_challenge_method')).toEqual(
+      'S256'
+    );
+    expect(parsedSignUrl.searchParams.get('redirect_uri')).toEqual(
+      'cryptr://mobile-app'
     );
   });
 
-  it('should return signin token url if signup transaction', () => {
-    const transaction = new Transaction(
-      config.default_redirect_uri,
-      Sign.SIGNUP
+  test('should return proper shared sign URL', () => {
+    let transaction = new Transaction(
+      Locale.EN,
+      sharedConfig.defaultRedirectUri
     );
-
-    let url = tokenUrl(config, authorization, transaction);
-
-    expect(url).toEqual(
-      `https://cryptr.authent.me/api/v1/tenants/shark-academy/123-aze/${transaction.pkce.state}/oauth/signup/client/${authorization.authorization_id}/token`
+    let signUrl = signInUrl(sharedConfig, transaction);
+    let parsedSignUrl = new URL(signUrl);
+    expect(parsedSignUrl.hostname).toEqual('cryptr.authent.me');
+    expect(parsedSignUrl.pathname).toEqual('/a/communitiz-app/');
+    expect(parsedSignUrl.searchParams).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('client_state')).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('scope')).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('code_challenge')).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('client_id')).toEqual(
+      sharedConfig.clientId
+    );
+    expect(parsedSignUrl.searchParams.get('locale')).toEqual('en');
+    expect(parsedSignUrl.searchParams.get('code_challenge_method')).toEqual(
+      'S256'
+    );
+    expect(parsedSignUrl.searchParams.get('redirect_uri')).toEqual(
+      'cryptr://mobile-app'
     );
   });
 
-  it('should return signup token url using authorization organization', () => {
-    const transaction = new Transaction(
-      config.default_redirect_uri,
-      Sign.SIGNUP
+  test('should allow other redirect uri than default sign URL', () => {
+    let transaction = new Transaction(Locale.EN, 'cryptr://app');
+    let signUrl = signInUrl(dedicatedConfig, transaction);
+    let parsedSignUrl = new URL(signUrl);
+    expect(parsedSignUrl.hostname).toEqual('cryptr.authent.me');
+    expect(parsedSignUrl.pathname).toEqual('/');
+    expect(parsedSignUrl.searchParams).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('client_state')).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('scope')).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('code_challenge')).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('client_id')).toEqual(
+      dedicatedConfig.clientId
     );
-
-    let url = tokenUrl(
-      config,
-      { organization_domain: 'misapret', ...authorization },
-      transaction
+    expect(parsedSignUrl.searchParams.get('locale')).toEqual('en');
+    expect(parsedSignUrl.searchParams.get('code_challenge_method')).toEqual(
+      'S256'
     );
-
-    expect(url).toEqual(
-      `https://cryptr.authent.me/api/v1/tenants/misapret/123-aze/${transaction.pkce.state}/oauth/signup/client/${authorization.authorization_id}/token`
+    expect(parsedSignUrl.searchParams.get('redirect_uri')).toEqual(
+      'cryptr://app'
     );
   });
 });
 
-describe('apiHelpers#revokeTokenUrl/1', () => {
-  const config: PreparedCryptrConfig = {
-    cryptr_base_url: 'https://cryptr.authent.me',
-    tenant_domain: 'shark-academy',
-    client_id: '123-aze',
-    audience: 'cryptr://app',
-    default_redirect_uri: 'cryptr://app',
-    dedicated_server: false,
-    no_popup_no_cookie: false,
-  };
-
-  it('should return revoke token url if sample transaction and sample refresh', () => {
-    let url = revokeTokenUrl(config, 'any_refresh');
-
-    expect(url).toEqual(
-      'https://cryptr.authent.me/api/v1/tenants/shark-academy/123-aze/oauth/token/revoke'
+describe('apiHelpers#domainUrl/3', () => {
+  test('should returl proper URL with domain query', () => {
+    let transaction = new Transaction(
+      Locale.EN,
+      dedicatedConfig.defaultRedirectUri
     );
-  });
-
-  it('should return revoke token url with organization pattern present in refresh', () => {
-    let url = revokeTokenUrl(config, 'misapret.any_refresh');
-
-    expect(url).toEqual(
-      'https://cryptr.authent.me/api/v1/tenants/misapret/123-aze/oauth/token/revoke'
+    let signUrl = domainUrl(dedicatedConfig, transaction, 'my-domain');
+    let parsedSignUrl = new URL(signUrl);
+    expect(parsedSignUrl.hostname).toEqual('cryptr.authent.me');
+    expect(parsedSignUrl.pathname).toEqual('/');
+    expect(parsedSignUrl.searchParams).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('client_state')).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('scope')).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('code_challenge')).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('client_id')).toEqual(
+      dedicatedConfig.clientId
     );
-  });
-});
-
-describe('apiHelpers#sloAfterRevokeTokenUrl/2', () => {
-  const config: PreparedCryptrConfig = {
-    cryptr_base_url: 'https://cryptr.authent.me',
-    tenant_domain: 'shark-academy',
-    client_id: '123-aze',
-    audience: 'cryptr://app',
-    default_redirect_uri: 'cryptr://app',
-    dedicated_server: false,
-    no_popup_no_cookie: false,
-  };
-  const sloCode = 'remove_me';
-
-  it('should return signin token url if sample transaction', () => {
-    let url = sloAfterRevokeTokenUrl(config, sloCode);
-
-    expect(url).toEqual(
-      'https://cryptr.authent.me/api/v1/tenants/shark-academy/123-aze/oauth/token/slo-after-revoke-token?slo_code=remove_me&target_url=cryptr%3A%2F%2Fapp'
+    expect(parsedSignUrl.searchParams.get('locale')).toEqual('en');
+    expect(parsedSignUrl.searchParams.get('code_challenge_method')).toEqual(
+      'S256'
     );
+    expect(parsedSignUrl.searchParams.get('redirect_uri')).toEqual(
+      'cryptr://mobile-app'
+    );
+    expect(parsedSignUrl.searchParams.get('domain')).toEqual('my-domain');
   });
 });
 
-describe('apiHelpers#refreshTokenUrl/2', () => {
-  const config: PreparedCryptrConfig = {
-    cryptr_base_url: 'https://cryptr.authent.me',
-    tenant_domain: 'shark-academy',
-    client_id: '123-aze',
-    audience: 'cryptr://app',
-    default_redirect_uri: 'cryptr://app',
-    dedicated_server: false,
-    no_popup_no_cookie: false,
-  };
-  const refreshTransaction = new Transaction(
-    config.default_redirect_uri,
-    Sign.REFRESH
-  );
-
-  it('should return signin token url if sample transaction and standard refresh', () => {
-    let url = refreshTokenUrl(config, refreshTransaction, 'any_refresh');
-
-    expect(url).toEqual(
-      `https://cryptr.authent.me/api/v1/tenants/shark-academy/123-aze/${refreshTransaction.pkce.state}/oauth/client/token`
+describe('apiHelpers#emailUrl/3', () => {
+  test('should returl proper URL with domain query', () => {
+    let transaction = new Transaction(
+      Locale.EN,
+      dedicatedConfig.defaultRedirectUri
     );
-  });
-
-  it('should return refresh token url if organization in refresh', () => {
-    let url = refreshTokenUrl(
-      config,
-      refreshTransaction,
-      'misapret.any_refresh'
+    let signUrl = emailUrl(dedicatedConfig, transaction, 'me@example.com');
+    let parsedSignUrl = new URL(signUrl);
+    expect(parsedSignUrl.hostname).toEqual('cryptr.authent.me');
+    expect(parsedSignUrl.pathname).toEqual('/');
+    expect(parsedSignUrl.searchParams).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('client_state')).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('scope')).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('code_challenge')).not.toBeNull();
+    expect(parsedSignUrl.searchParams.get('client_id')).toEqual(
+      dedicatedConfig.clientId
     );
-
-    expect(url).toEqual(
-      `https://cryptr.authent.me/api/v1/tenants/misapret/123-aze/${refreshTransaction.pkce.state}/oauth/client/token`
+    expect(parsedSignUrl.searchParams.get('locale')).toEqual('en');
+    expect(parsedSignUrl.searchParams.get('code_challenge_method')).toEqual(
+      'S256'
     );
+    expect(parsedSignUrl.searchParams.get('redirect_uri')).toEqual(
+      'cryptr://mobile-app'
+    );
+    expect(parsedSignUrl.searchParams.get('email')).toEqual('me@example.com');
   });
 });
 
-describe('apiHelpers#universalTokenUrl', () => {
-  const config: PreparedCryptrConfig = {
-    cryptr_base_url: 'https://cryptr.authent.me',
-    tenant_domain: 'shark-academy',
-    client_id: '123-aze',
-    audience: 'cryptr://app',
-    default_redirect_uri: 'cryptr://app',
-    dedicated_server: false,
-    no_popup_no_cookie: false,
-  };
+describe('apiHelpers#universalTokenUrl/3', () => {
+  test('should returl proper URL with domain query', () => {
+    let signUrl = universalTokenUrl(sharedConfig, 'some-org-domain');
+    let parsedSignUrl = new URL(signUrl);
+    expect(parsedSignUrl.hostname).toEqual('cryptr.authent.me');
+    expect(parsedSignUrl.pathname).toEqual('/org/some-org-domain/oauth2/token');
+  });
 
-  it('should return the org domain oauth2 token url', () => {
-    let url = universalTokenUrl(config, 'some-company');
-    expect(url).toEqual(
-      'https://cryptr.authent.me/org/some-company/oauth2/token'
+  test('should returl proper URL even if shared instance with domain query', () => {
+    let signUrl = universalTokenUrl(sharedConfig, 'some-org-domain');
+    let parsedSignUrl = new URL(signUrl);
+    expect(parsedSignUrl.hostname).toEqual('cryptr.authent.me');
+    expect(parsedSignUrl.pathname).toEqual('/org/some-org-domain/oauth2/token');
+  });
+});
+
+describe('apiHelpers#universalTokensBody/', () => {
+  test('should return proper stringified json if right params', () => {
+    let transaction = new Transaction(
+      Locale.EN,
+      dedicatedConfig.defaultRedirectUri
     );
+    let params = { code: 'code', request_id: 'request_id' };
+    let tokensBody = universalTokensBody(transaction, params, dedicatedConfig);
+    expect(tokensBody).not.toBeNull();
+    expect(JSON.parse(tokensBody)).toEqual({
+      client_id: dedicatedConfig.clientId,
+      client_state: transaction.pkce.state,
+      code: 'code',
+      request_id: 'request_id',
+      code_verifier: transaction.pkce.codeVerifier,
+      grant_type: 'authorization_code',
+      nonce: transaction.nonce,
+    });
+  });
+
+  test('should fail if wrong params', () => {
+    let transaction = new Transaction(
+      Locale.EN,
+      dedicatedConfig.defaultRedirectUri
+    );
+    let params = {};
+    let tokensBody = universalTokensBody(transaction, params, dedicatedConfig);
+    expect(tokensBody).not.toBeNull();
+    expect(JSON.parse(tokensBody)).toEqual({
+      client_id: dedicatedConfig.clientId,
+      client_state: transaction.pkce.state,
+      code_verifier: transaction.pkce.codeVerifier,
+      grant_type: 'authorization_code',
+      nonce: transaction.nonce,
+    });
+  });
+});
+
+describe('apiHelpers#logoutBody/3', () => {
+  test('should return proper JSON payload when access token used', () => {
+    let logoutBody = logOutBody(dedicatedConfig, 'my-current-access-token');
+    expect(logOutBody).not.toBeNull();
+    if (logoutBody) {
+      expect(JSON.parse(logoutBody)).toEqual({
+        token: 'my-current-access-token',
+        token_type_hint: 'access_token',
+        client_id: dedicatedConfig.clientId,
+      });
+    }
+  });
+
+  test('should return proper JSON payload when refersh token used', () => {
+    let logoutBody = logOutBody(
+      dedicatedConfig,
+      undefined,
+      'my-current-refresh-token'
+    );
+    expect(logoutBody).not.toBeNull();
+    if (logoutBody) {
+      expect(JSON.parse(logoutBody)).toEqual({
+        token: 'my-current-refresh-token',
+        token_type_hint: 'refresh_token',
+        client_id: dedicatedConfig.clientId,
+      });
+    }
+  });
+
+  test('should return undefined if missing token', () => {
+    let logoutBody = logOutBody(dedicatedConfig);
+    expect(logoutBody).toBeUndefined();
+  });
+});
+
+describe('apiHelpers#revokeTokenUrl', () => {
+  test('should return proper URL if dedicated service', () => {
+    let revokeUrl = revokeTokenUrl(dedicatedConfig);
+    expect(revokeUrl).toEqual('https://cryptr.authent.me/oauth/revoke');
+  });
+
+  test('should return proper URL if shared service', () => {
+    let revokeUrl = revokeTokenUrl(dedicatedConfig);
+    expect(revokeUrl).toEqual('https://cryptr.authent.me/oauth/revoke');
+  });
+});
+
+describe('apiHelpers#refreshBody/3', () => {
+  test('should return proper body', () => {
+    let transaction = new Transaction(
+      Locale.EN,
+      dedicatedConfig.defaultRedirectUri
+    );
+    let body = refreshBody('my-refresh-token', transaction, dedicatedConfig);
+    expect(body).not.toBeNull();
+    expect(JSON.parse(body)).toEqual({
+      client_id: dedicatedConfig.clientId,
+      grant_type: 'refresh_token',
+      nonce: transaction.nonce,
+      token: 'my-refresh-token',
+    });
+  });
+});
+
+describe('apiHelpers#refreshTokenUrl/1', () => {
+  test('should return proper URL when dedicated', () => {
+    let url = refreshTokenUrl(dedicatedConfig);
+    expect(url).toEqual('https://cryptr.authent.me/oauth/token');
+  });
+
+  test('should return proper URL when shared', () => {
+    let url = refreshTokenUrl(sharedConfig);
+    expect(url).toEqual('https://cryptr.authent.me/oauth/token');
+  });
+});
+
+describe('apiHelper.jsonApiRequest/3', () => {
+  test('should call fetch with proper params', async () => {
+    const rest = await jsonApiRequest(
+      'http://lvh.me:4000',
+      '{"key": "value"}',
+      'GET'
+    );
+    expect(fetchMock).toHaveBeenCalledWith('http://lvh.me:4000', {
+      body: '{"key": "value"}',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'GET',
+    });
+    expect(rest).not.toBeNull();
+  });
+
+  test('should call fetch with POST method if no method given', async () => {
+    const rest = await jsonApiRequest('http://lvh.me:4000', '{"key": "value"}');
+    expect(fetchMock).toHaveBeenCalledWith('http://lvh.me:4000', {
+      body: '{"key": "value"}',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+    });
+    expect(rest).not.toBeNull();
   });
 });

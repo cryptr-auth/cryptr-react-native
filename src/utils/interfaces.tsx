@@ -1,7 +1,56 @@
 import type { ReactNode } from 'react';
 import type { CryptrReducerActionKind } from './enums';
 
-interface CryptrActionPayload {
+export interface CryptrConfig {
+  accountDomain: string;
+  clientId: string;
+  audience: string;
+  defaultRedirectUri: string;
+  defaultLocale?: string;
+  cryptrServiceUrl: string;
+  telemetry?: boolean;
+  dedicatedServer?: boolean;
+  noPopupNoCookie?: boolean;
+}
+
+export default interface CryptrInterface {
+  startAuthentication: (
+    uri: string,
+    no_popup_no_cookie: boolean,
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
+  ) => any;
+  getRefresh: (
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
+  ) => any;
+  removeRefresh: (
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
+  ) => any;
+  setRefresh: (
+    refreshToken: string,
+    successCallback?: (data: any) => any,
+    errorCallback?: (data: any) => any
+  ) => any;
+}
+
+export interface ProviderOptions extends CryptrConfig {}
+
+export interface ProviderProps extends ProviderOptions {
+  children: ReactNode;
+}
+
+export interface CryptrState {
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  accessToken?: string;
+  idToken?: string;
+  error?: any;
+  error_description?: string;
+}
+
+export interface CryptrActionPayload {
   access_token?: string;
   id_token?: string;
   error?: string;
@@ -18,38 +67,10 @@ export interface CryptrAction {
   error?: CryptrActionError;
 }
 
-export interface CryptrState {
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  accessToken?: string;
-  idToken?: string;
-  error?: string;
-  error_description?: string;
-}
-
-export interface CryptrConfig {
-  tenant_domain: string;
-  client_id: string;
-  audience: string;
-  default_redirect_uri: string;
-  default_locale?: string;
-  region?: string;
-  cryptr_base_url?: string;
-  telemetry?: boolean;
-  dedicated_server?: boolean;
-  no_popup_no_cookie?: boolean;
-}
-
 export interface PreparedCryptrConfig extends CryptrConfig {
-  cryptr_base_url: string;
-  dedicated_server: boolean;
-  no_popup_no_cookie: boolean;
-}
-
-export interface ProviderOptions extends CryptrConfig {}
-
-export interface ProviderProps extends ProviderOptions {
-  children: ReactNode;
+  cryptrServiceUrl: string;
+  dedicatedServer: boolean;
+  noPopupNoCookie: boolean;
 }
 
 export interface IHash<T> {
@@ -59,43 +80,3 @@ export interface IHash<T> {
 export interface SecuredNavigationEvent {
   eventType: string;
 }
-
-export type MetadataType = {
-  [key: string]: any;
-};
-
-export type JwtHeaderType = {
-  alg: string;
-  typ: string;
-  [key: string]: any;
-};
-
-export type JwtBodyObject = {
-  [key: string]: any;
-};
-
-export type CryptrUser = {
-  application_metadata?: MetadataType;
-  at_hash: string;
-  aud: string;
-  c_hash: string;
-  cid: string;
-  dbs?: string;
-  email: string;
-  exp: number;
-  family_name?: string;
-  given_name?: string;
-  iat: number;
-  iss: string;
-  jti: string;
-  jtt: string;
-  nonce: string;
-  resource_owner_metadata?: MetadataType;
-  s_hash?: string;
-  scp: string[];
-  sub: string;
-  tnt: string;
-  sci?: string;
-  ips?: string;
-  ver: number;
-};
