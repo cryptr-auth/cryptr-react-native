@@ -48,6 +48,18 @@ jobs:
       - name: Build package
         run: yarn prepare
 
+  build-android-no-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Build package
+        run: yarn build:android
+
   build-android:
     runs-on: ubuntu-latest
     env:
