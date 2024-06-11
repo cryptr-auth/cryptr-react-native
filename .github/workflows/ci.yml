@@ -48,6 +48,20 @@ jobs:
       - name: Build package
         run: yarn prepare
 
+  audit:
+    name: Audit packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Audit root packages
+        run: npm audit --audit-level moderate
+        env:
+          CI: true
+      - name: Audit example packages
+        run: npm audit --workspace example --audit-level moderate
+        env:
+          CI: true
+
   # build-android:
   #   runs-on: ubuntu-latest
   #   env:
