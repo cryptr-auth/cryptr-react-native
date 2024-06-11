@@ -121,46 +121,44 @@ RCT_EXPORT_METHOD(startAuthentication:(NSURL *)url
     }
     RCTLogInfo(@"You specified a url.");
 
-    // if (@available(iOS 12.0, *)) {
-    //     ASWebAuthenticationSession* session =
-    //     [[ASWebAuthenticationSession alloc] initWithURL:url
-    //                                   callbackURLScheme: @"cryptr"
-    //                                   completionHandler:^(NSURL * _Nullable callbackURL,
-    //                                                       NSError * _Nullable error) {
-    //         _authenticationVCC = nil;
+    if (@available(iOS 12.0, *)) {
+        ASWebAuthenticationSession* session =
+        [[ASWebAuthenticationSession alloc] initWithURL:url
+                                      callbackURLScheme: @"cryptr"
+                                      completionHandler:^(NSURL * _Nullable callbackURL,
+                                                          NSError * _Nullable error) {
+            _authenticationVCC = nil;
 
-    //         if (callbackURL) {
-    //             successCallback(@[callbackURL.absoluteString]);
-    //         } else if(error) {
-    //           errorCallback(@[[error localizedDescription]]);
-    //         }
+            if (callbackURL) {
+                successCallback(@[callbackURL.absoluteString]);
+            } else if(error) {
+              errorCallback(@[[error localizedDescription]]);
+            }
 
-    //     }];
+        }];
 
-    //     #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
-    //     if (@available(iOS 13.0, *)) {
-    //         session.presentationContextProvider = self;
-    //         if (prefersEphemeralWebBrowserSession) {
-    //           session.prefersEphemeralWebBrowserSession = true;
-    //         }
-    //     }
-    //     #endif
+        #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
+        if (@available(iOS 13.0, *)) {
+            session.presentationContextProvider = self;
+            if (prefersEphemeralWebBrowserSession) {
+              session.prefersEphemeralWebBrowserSession = true;
+            }
+        }
+        #endif
 
-    //     _authenticationVCC = session;
+        _authenticationVCC = session;
 
-    //     [session start];
-    // } else {
+        [session start];
+    } else {
       [self openInSafari:url];
       return;
-    // }
+    }
 }
 
-#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
 #pragma mark - ASWebAuthenticationPresentationContextProviding
 
 - (ASPresentationAnchor)presentationAnchorForWebAuthenticationSession:(ASWebAuthenticationSession *)session  API_AVAILABLE(ios(13.0)){
    return [UIApplication sharedApplication].keyWindow;
 }
-#endif
 
 @end
