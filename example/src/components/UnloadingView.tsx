@@ -5,6 +5,7 @@ import UnauthenticatedView from './UnauthenticatedView';
 
 const UnloadingView = () => {
   const { isAuthenticated } = useCryptr();
+
   return (
     <>{isAuthenticated ? <AuthenticatedView /> : <UnauthenticatedView />}</>
   );

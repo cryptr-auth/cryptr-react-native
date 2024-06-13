@@ -16,7 +16,7 @@ React Native SDK for Cryptr Authentication through SSO
     - [3 - Android](#3---android)
   - [Usage](#usage)
     - [Basis](#basis)
-      - [iOS Alert dialog on SSO log in](#ios-alert-dialog-on-sso-log-in)
+      - [iOS Alert dialog on SSO log-in](#ios-alert-dialog-on-sso-log-in)
     - [Hooks](#hooks)
       - [isAuthenticated](#isauthenticated)
       - [user](#user)
@@ -28,7 +28,10 @@ React Native SDK for Cryptr Authentication through SSO
       - [logOut](#logout)
       - [error](#error)
       - [isLoading](#isloading)
+      - [signIn](#signin)
     - [Components](#components)
+  - [Migration details](#migration-details)
+    - [To v1.0.0](#to-v100)
 
 ## Expo integration
 
@@ -90,7 +93,7 @@ android {
   //...
   defaultConfig {
     //...
-    manifestPlaceholders = [cryptrDomain: "your-tenant", cryptrScheme: "cryptr"]
+    manifestPlaceholders = [cryptrDomain: "your-account-domain", cryptrScheme: "cryptr"]
   }
 }
 ```
@@ -108,13 +111,12 @@ At the top level of your React Native App set the configuration you got on the f
 
 ```js
 const config: CryptrConfig = {
-  tenant_domain: 'YOUR_TENANT',
-  client_id: 'APPLICATION_ID',
-  audience: 'cryptr://YOUR_TENANT',
-  default_redirect_uri: 'cryptr://YOUR_TENANT',
-  region: Region.EU,
-  cryptr_base_url: 'YOUR_SERVER_URL',
-  dedicated_server: true, // if you have a dedicated server on cryptr
+  accountDomain: 'your-account-domain',
+  clientId: 'CLIENT_ID',
+  audience: 'cryptr://your-account-domain',
+  defaultRedirectUri: 'cryptr://your-account-domain',
+  cryptrServiceUrl: 'YOUR_SERVER_URL',
+  dedicated_server: true, // if you have a dedicated Cryptr service
 };
 ```
 
@@ -123,12 +125,12 @@ Then you can use it into `<CryptrProvider {...config}>`
 Example:
 Inside this Provider, you can handle Cryptr Authentication using our Hooks and/or components.
 
-#### iOS Alert dialog on SSO log in
+#### iOS Alert dialog on SSO log-in
 
 If you want to avoid the display of the below Alert dialog on iOS. you can add `no_popup_no_cookie: true` to your config.
 ![Capture d’écran 2022-06-14 à 19 05 54](https://user-images.githubusercontent.com/2788767/173638699-14f1f856-6559-46fa-88a0-fc770e0ebf6a.png)
 
-**:warning: With this configuration, even the default browser has registered credentials, end-user will have to type them each type.**
+**:warning: With this configuration, even the default browser has registered **credentials, **the user** will have** to type them each type.**
 
 ### Hooks
 
@@ -193,9 +195,11 @@ const { idToken } = useCryptr()
 {idToken && <Text>{idToken}</Text>}
 ```
 
---
+---
 
 Actions
+
+---
 
 #### signInWithDomain
 
@@ -205,13 +209,11 @@ Hook action to sign in the user using his organization's domain.
 const { signInWithDomain } = useCryptr();
 
 // Signature
-signInWithDomain(domain?: string, successCallback? (data: any) => any, errorCallback?: (data: any) => any)
+signInWithDomain(domain: string, successCallback? (data: any) => any, errorCallback?: (data: any) => any)
 
 // Sign in for domain `company-dot-io`
 signInWithDomain('company-dot-io')
 ```
-
-💡 If you do not provide value for `domain` user will be asked to input his email address and regarding to your organizations configuration he will be redirected to proper authentication process.
 
 #### signInWithEmail
 
@@ -234,8 +236,8 @@ Hook action to refresh tokens to new ones.
 ```js
 const { refreshTokens } = useCryptr()
 
-// [...]
-refreshTokens(callback?: (data: any) => any)
+// Signature
+refreshTokens(successCallback?: (data: any) => any, errorCallback?: (data: any) => any)
 ```
 
 #### logOut
@@ -246,8 +248,7 @@ Hook action to log out the user.
 ```js
 const { logOut } = useCryptr()
 
-// [...]
-
+// Signature
 logOut(successCallback?: (data: any) => any, errorCallback?: (data: any) => any)
 ```
 
@@ -273,10 +274,44 @@ The return type is a <u>**boolean**</u>
 const { isLoading } = useCryptr()
 ```
 
+#### signIn
+
+Hook action to sign in the user using his organization's domain.
+
+```js
+const { signIn } = useCryptr();
+
+// Signature
+signIn(successCallback? (data: any) => any, errorCallback?: (data: any) => any)
+
+// Sign in for domain `company-dot-io`
+signIn()
+```
+
 ### Components
 
 This SDK also includes Components to simplify your integration.
 
-- `CryptrGatewayButton` to log in either with domain or email  (hides when session is already active [`autoHide={false}` to disable])
+- `CryptrGatewayButton` to log in either with **domain** or **email**  (hides when session is already active [`autoHide={false}` to disable])
+- `SignInButton` to log in either when not knowing neither email or domain, the user will be asked to fill a form  (hides when session is already active [`autoHide={false}` to disable])
 - `LogOutButton` to logout user (hides when no session is active [`autoHide={false}` to disable])
 - `RefreshButton` to get new tokens (hides when session is already active [`autoHide={false}` to disable])
+
+## Migration details
+
+### To v1.0.0
+
+Configuration change
+
+| old key | new key |
+| --- | --- |
+| tenant_domain | accountDomain |
+| client_id | clientId |
+| default_redirect_uri | defaultRedirectUri |
+| cryptr_base_url | cryptrServiceUrl |
+| dedicated_server | dedicatedServer |
+
+
+Components/hooks
+
+If you either used `signInWithDomain()` hook or `<CryptrGatewayButton/>` component without `domain` parameter, please use now `signIn` or `<SignInButton/>` accordingly

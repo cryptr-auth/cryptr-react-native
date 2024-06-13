@@ -1,47 +1,26 @@
 import React from 'react';
-import {
-  Pressable,
-  StyleProp,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
-import { defaultStyles } from '../utils/defaultStypes';
-import useCryptr from '../useCryptr';
-import { Locale } from '../utils/enums';
-
-type LogOutProps = {
-  text?: string;
-  buttonStyle?: StyleProp<ViewStyle>;
-  buttonTextStyle?: StyleProp<TextStyle>;
-  autoHide?: boolean;
-  children?: JSX.Element;
-  successCallback?: (data: any) => any;
-  errorCallback?: (error: any) => any;
-};
+import { Pressable, Text, View } from 'react-native';
+import type { CryptrButtonProps } from '../utils/types';
+import { defaultStyles } from '../utils/defaultStyles';
+import useCryptr from '../session/useCryptr';
 
 const CryptrLogOutButton = ({
-  text,
+  autoHide = true,
   buttonStyle,
   buttonTextStyle,
   children,
-  successCallback,
   errorCallback,
-  autoHide = true,
-}: LogOutProps): JSX.Element => {
-  const { config, isAuthenticated, isLoading, logOut } = useCryptr();
+  successCallback,
+  text,
+}: CryptrButtonProps): JSX.Element => {
+  const { isAuthenticated, isLoading, logOut } = useCryptr();
 
-  const ssoSignInText = (): string => {
-    if (text) {
-      return text;
-    }
-    return config().default_locale && config().default_locale === Locale.EN
-      ? 'Log out'
-      : 'Déconnexion';
+  const textValue = (): string => {
+    if (text) return text;
+    return 'Log out';
   };
 
-  const signOut = () => {
+  const handleClick = async () => {
     logOut(successCallback, errorCallback);
   };
 
@@ -53,14 +32,17 @@ const CryptrLogOutButton = ({
   }
 
   return (
-    <Pressable style={buttonStyle || defaultStyles.button} onPress={signOut}>
+    <Pressable
+      onPress={handleClick}
+      style={buttonStyle || defaultStyles.button}
+    >
       {children ? (
         children
       ) : (
         <>
-          {ssoSignInText() && (
+          {textValue() !== '' && (
             <Text style={buttonTextStyle || defaultStyles.buttonText}>
-              {ssoSignInText()}
+              {textValue()}
             </Text>
           )}
         </>

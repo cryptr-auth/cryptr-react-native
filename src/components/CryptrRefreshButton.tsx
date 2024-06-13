@@ -1,25 +1,8 @@
 import React from 'react';
-import {
-  Pressable,
-  StyleProp,
-  Text,
-  TextStyle,
-  View,
-  ViewStyle,
-} from 'react-native';
-import { defaultStyles } from '../utils/defaultStypes';
-import useCryptr from '../useCryptr';
-import { Locale } from '../utils/enums';
-
-type RefreshProps = {
-  text?: string;
-  buttonStyle?: StyleProp<ViewStyle>;
-  buttonTextStyle?: StyleProp<TextStyle>;
-  successCallback?: (data: any) => any;
-  errorCallback?: (error: any) => any;
-  autoHide?: boolean;
-  children?: JSX.Element;
-};
+import type { CryptrButtonProps } from '../utils/types';
+import { Pressable, Text, View } from 'react-native';
+import useCryptr from '../session/useCryptr';
+import { defaultStyles } from '../utils/defaultStyles';
 
 const CryptrRefreshButton = ({
   text,
@@ -29,19 +12,13 @@ const CryptrRefreshButton = ({
   successCallback,
   errorCallback,
   autoHide = true,
-}: RefreshProps): JSX.Element => {
-  const { config, isAuthenticated, isLoading, refreshTokens } = useCryptr();
-
-  const ssoSignInText = (): string => {
-    if (text) {
-      return text;
-    }
-    return config().default_locale && config().default_locale === Locale.EN
-      ? 'Refresh'
-      : 'Rafraîchir';
+}: CryptrButtonProps): JSX.Element => {
+  const { isAuthenticated, isLoading, refreshTokens } = useCryptr();
+  const textValue = () => {
+    return text || 'Refresh';
   };
 
-  const refresh = () => {
+  const handleClick = () => {
     refreshTokens(successCallback, errorCallback);
   };
 
@@ -51,16 +28,18 @@ const CryptrRefreshButton = ({
   ) {
     return <View />;
   }
-
   return (
-    <Pressable style={buttonStyle || defaultStyles.button} onPress={refresh}>
+    <Pressable
+      onPress={handleClick}
+      style={buttonStyle || defaultStyles.button}
+    >
       {children ? (
         children
       ) : (
         <>
-          {ssoSignInText() && (
+          {textValue() && (
             <Text style={buttonTextStyle || defaultStyles.buttonText}>
-              {ssoSignInText()}
+              {textValue()}
             </Text>
           )}
         </>

@@ -46,8 +46,8 @@ export const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    fontSize: 32,
-    marginBottom: 32,
+    fontSize: 24,
+    marginVertical: 32,
     color: '#ffffff',
   },
   magicLinkBlock: {

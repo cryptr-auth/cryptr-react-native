@@ -1,57 +1,63 @@
 import React from 'react';
-import { Button, Text } from 'react-native';
-import {
-  LogOutButton,
-  RefreshButton,
-  useCryptr,
-} from '@cryptr/cryptr-react-native';
+import { Alert, Platform, Text, ToastAndroid } from 'react-native';
 import { styles } from '../styles';
 import HorizontalDivider from './HorizontalDivider';
+import useCryptr from '../../../src/session/useCryptr';
+import { LogOutButton, RefreshButton } from '../../../src/components';
 import TokenView from './TokenView';
 
 const AuthenticatedView = () => {
-  const { accessToken, decoratedRequest, user } = useCryptr();
+  const { accessToken, user } = useCryptr();
+
+  const displayMessage = (
+    title: string,
+    message: any,
+    duration: number = ToastAndroid.SHORT
+  ) => {
+    console.debug(title, message);
+    const messageToDisplay =
+      typeof message === 'object' ? JSON.stringify(message, null, 2) : message;
+    if (Platform.OS === 'android') {
+      ToastAndroid.show(String(messageToDisplay), duration);
+    } else {
+      Alert.alert(String(messageToDisplay));
+    }
+  };
 
   const logOutCallback = (data: any) => {
-    console.debug('logout result');
-    console.debug(data);
+    displayMessage('logOutCallback', data);
   };
 
   const logOutErrorCallback = (error: any) => {
-    console.debug('logout error');
-    console.debug(error);
+    displayMessage('logOutErrorCallback', error, ToastAndroid.LONG);
   };
 
   const refreshCallback = (data: any) => {
-    console.debug('refresh result');
-    console.debug(data);
+    displayMessage('refreshCallback', data);
   };
 
   const refreshErrorCallback = (error: any) => {
-    console.debug('refresh error');
-    console.debug(error);
+    displayMessage('refreshErrorCallback', error, ToastAndroid.LONG);
   };
 
-  const makeAPIRequest = () => {
-    decoratedRequest('http://localhost:5000', {
-      headers: { 'x-titi': 'toto' },
-    })
-      .then((data) => console.debug(data))
-      .catch((error) => console.error(error));
-  };
   return (
     <>
       <Text style={styles.textAuthenticated}>You're logged in</Text>
       <HorizontalDivider />
       {user() && (
         <>
-          <TokenView title={user()!.tnt} value={`Issued at ${user()!.iat}`} />
-          <TokenView title={'SCI'} value={user()!.sci || '?'} />
-          <TokenView title={'IPS'} value={user()!.ips || '?'} />
+          <TokenView title={user()!.org} value={`Issued at ${user()!.iat}`} />
+          <TokenView title={'Env'} value={user()!.env || '?'} />
+          <TokenView
+            title={'Identities'}
+            value={JSON.stringify(user()?.identities, null, 2)}
+          />
         </>
       )}
-      {accessToken && <TokenView title="Access Token" value={accessToken} />}
-      {user() && <TokenView title="User" value={JSON.stringify(user())} />}
+      {accessToken && <TokenView title="Access token" value={accessToken} />}
+      {user() && (
+        <TokenView title="User" value={JSON.stringify(user(), null, 2)} />
+      )}
       <HorizontalDivider />
       <LogOutButton
         successCallback={logOutCallback}
@@ -61,7 +67,7 @@ const AuthenticatedView = () => {
         successCallback={refreshCallback}
         errorCallback={refreshErrorCallback}
       />
-      <Button title="API Request" onPress={makeAPIRequest} />
+      <HorizontalDivider />
     </>
   );
 };

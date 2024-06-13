@@ -1,21 +1,20 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Pressable, Text } from 'react-native';
 import { styles } from '../styles';
 
-interface TokenProps {
+interface TokenViewProps {
   title: string;
   value: string;
 }
 
-const TokenView = (props: TokenProps) => {
-  const { title, value } = props;
-
-  return (
-    <View style={styles.tokenViewWrapper}>
-      <Text style={styles.tokenViewTitle}>{title}</Text>
-      <Text style={styles.tokenViewBody}>{value}</Text>
-    </View>
-  );
-};
+const TokenView = ({ title, value }: TokenViewProps) => (
+  <Pressable
+    style={styles.tokenViewWrapper}
+    onLongPress={() => console.debug(title, value)}
+  >
+    <Text style={styles.tokenViewTitle}>{title}</Text>
+    <Text style={styles.tokenViewBody}>{value}</Text>
+  </Pressable>
+);
 
 export default TokenView;

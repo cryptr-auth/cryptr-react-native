@@ -1,22 +1,18 @@
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { JWT, RS256 } from './constants';
-import type {
-  JwtBodyObject,
-  JwtHeaderType,
-  PreparedCryptrConfig,
-} from './interfaces';
+import type { PreparedCryptrConfig } from './interfaces';
+import type { JwtBodyObject, JwtHeaderType } from './types';
 
 const COMMON_FIELDS: Array<string> = [
-  'iss',
   'sub',
   'aud',
   'exp',
   'iat',
-  'cid',
+  'client_id',
   'jti',
   'jtt',
-  'scp',
-  'tnt',
+  'scope',
+  'org',
   'jtt',
 ];
 
@@ -60,9 +56,11 @@ const ACCESS_FIELDS = COMMON_FIELDS;
   +-----------+--------------+--------+-----------------------------------------+
 */
 
-const ID_FIELDS = ['at_hash', 'c_hash', 'nonce'].concat(COMMON_FIELDS);
+const ID_FIELDS = ['at_hash', 'c_hash', 'nonce']
+  .concat(COMMON_FIELDS)
+  .filter((f) => !['client_id', 'scope'].includes(f));
 
-export const validatesFieldsExist = (
+const validatesFieldsExist = (
   jwtBody: any,
   fields: string[]
 ): void | boolean => {
@@ -75,14 +73,22 @@ export const validatesFieldsExist = (
   return true;
 };
 
-const validatesHeaderFromToken = (token: any): void | true => {
+const validatesHeaderFromToken = (
+  token: any,
+  config: PreparedCryptrConfig,
+  organization_domain?: string
+): void | true => {
   const header: JwtHeaderType = jwtDecode(token, {
     header: true,
   });
-  return validatesHeader(header);
+  return validatesHeader(header, config, organization_domain);
 };
 
-export const validatesHeader = (header: JwtHeaderType): void | true => {
+const validatesHeader = (
+  header: JwtHeaderType,
+  config: PreparedCryptrConfig,
+  organization_domain?: string
+): void | true => {
   if (header.typ !== JWT) {
     throw new Error('The token must be a JWT');
   }
@@ -95,10 +101,12 @@ export const validatesHeader = (header: JwtHeaderType): void | true => {
     throw new Error('The token need a kid (key identifier) in header');
   }
 
+  validatesIssuer(header, config, organization_domain);
+
   return true;
 };
 
-export const validatesTimestamps = (jwtBody: any): void | true => {
+const validatesTimestamps = (jwtBody: any): void | true => {
   if (!Number.isInteger(jwtBody.exp)) {
     throw new Error('Expiration Time (exp) claim must be a present number');
   }
@@ -113,21 +121,23 @@ export const validatesAudience = (
   jwtBody: any,
   config: PreparedCryptrConfig
 ): void | boolean => {
-  if (config.audience !== jwtBody.aud) {
+  const expectedAudience =
+    jwtBody.jtt === 'openid' ? config.clientId : config.audience;
+  if (jwtBody.aud !== expectedAudience) {
     throw new Error(
-      `Audience (aud) ${jwtBody.aud} claim is not compliant with ${config.audience} from config`
+      `Audience (aud) ${jwtBody.aud} claim is not compliant with ${expectedAudience} from config`
     );
   }
   return true;
 };
 
-export const validatesIssuer = (
+const validatesIssuer = (
   jwtBody: any,
   config: PreparedCryptrConfig,
   organization_domain?: string
 ): void | boolean => {
-  const effectiveDomain = organization_domain || config.tenant_domain;
-  const expectedIssuer = [config.cryptr_base_url, 't', effectiveDomain].join(
+  const effectiveDomain = organization_domain || config.accountDomain;
+  const expectedIssuer = [config.cryptrServiceUrl, 't', effectiveDomain].join(
     '/'
   );
   const jwtBodyIssuer = jwtBody.iss;
@@ -141,13 +151,13 @@ export const validatesIssuer = (
   return true;
 };
 
-export const validatesClient = (
+const validatesClient = (
   jwtBody: any,
   config: PreparedCryptrConfig
 ): void | true => {
-  if (config.client_id !== jwtBody.cid) {
+  if (jwtBody.jtt !== 'openid' && config.clientId !== jwtBody.client_id) {
     throw new Error(
-      `Client id (cid) ${jwtBody.cid} claim is not compliant with ${config.client_id} from config`
+      `Client id (client_id) ${jwtBody.client_id} claim is not compliant with ${config.clientId} from config`
     );
   }
   return true;
@@ -167,13 +177,11 @@ const validatesExpiration = (jwtBody: any): void | boolean => {
 
 const validatesJwtBody = (
   jwtBody: any,
-  config: PreparedCryptrConfig,
-  organization_domain?: string
+  config: PreparedCryptrConfig
 ): void | boolean => {
   return (
     validatesTimestamps(jwtBody) &&
     validatesAudience(jwtBody, config) &&
-    validatesIssuer(jwtBody, config, organization_domain) &&
     validatesClient(jwtBody, config) &&
     validatesExpiration(jwtBody)
   );
@@ -185,24 +193,22 @@ const Jwt = {
   },
   validatesAccessToken: (
     accessToken: string,
-    config: PreparedCryptrConfig,
-    organization_domain?: string
+    config: PreparedCryptrConfig
   ): boolean => {
     const jwtBody = Jwt.body(accessToken);
-    validatesHeaderFromToken(accessToken);
-    validatesJwtBody(jwtBody, config, organization_domain);
+    validatesHeaderFromToken(accessToken, config, jwtBody.org);
+    validatesJwtBody(jwtBody, config);
     validatesFieldsExist(jwtBody, ACCESS_FIELDS);
 
     return true;
   },
   validatesIdToken: (
     idToken: string,
-    config: PreparedCryptrConfig,
-    organization_domain?: string
+    config: PreparedCryptrConfig
   ): boolean => {
     const jwtBody = Jwt.body(idToken);
-    validatesHeaderFromToken(idToken);
-    validatesJwtBody(jwtBody, config, organization_domain);
+    validatesHeaderFromToken(idToken, config, jwtBody.org);
+    validatesJwtBody(jwtBody, config);
     validatesFieldsExist(jwtBody, ID_FIELDS);
 
     return true;

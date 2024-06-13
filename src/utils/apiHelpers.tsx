@@ -1,208 +1,95 @@
-// URL Builders
-
-import type Transaction from 'src/models/Transaction';
+import type Transaction from '../oauth/Transaction';
 import { Locale } from './enums';
-import { organizationDomain } from './helpers';
-import type { PreparedCryptrConfig } from './interfaces';
+import type { IHash, PreparedCryptrConfig } from './interfaces';
 
-type QueryParam<T, K> = [T, K];
-type QueryParams<T, K> = QueryParam<T, K>[];
-
-const urlBuilder = (
-  urlParts: Array<string>,
-  queryParams?: QueryParams<string, string>
-): string => {
-  let url = new URL(urlParts.join('/'));
-  if (queryParams) {
-    queryParams.forEach((queryParam) => {
-      url.searchParams.append(queryParam[0], queryParam[1]);
-    });
-  }
-
-  return url.href;
-};
-
-export const tokenUrl = (
-  config: PreparedCryptrConfig,
-  authorization: any,
-  transaction: Transaction
-): string => {
-  const {
-    signType,
-    pkce: { state: pkceState },
-  } = transaction;
-  const { authorization_id, organization_domain } = authorization;
-  let domain = organization_domain || config.tenant_domain;
-  let urlParts = [
-    config.cryptr_base_url,
-    'api',
-    'v1',
-    'tenants',
-    domain,
-    config.client_id,
-    pkceState,
-    'oauth',
-    signType,
-    'client',
-    authorization_id,
-    'token',
-  ];
-  return urlBuilder(urlParts);
-};
-
-export const universalTokenUrl = (
-  config: PreparedCryptrConfig,
-  orgDOmain: string
-): string => {
-  let urlParts = [config.cryptr_base_url, 'org', orgDOmain, 'oauth2', 'token'];
-  return urlBuilder(urlParts);
-};
-
-export const domainGatewayUrl = (
+export const signInUrl = (
   config: PreparedCryptrConfig,
   transaction: Transaction,
-  domain?: string
-) => {
-  const { client_id, cryptr_base_url, dedicated_server, tenant_domain } =
-    config;
-  const cryptrBaseUrl = dedicated_server
-    ? cryptr_base_url
-    : [cryptr_base_url, 't', tenant_domain, ''].join('/');
-  const locale = transaction.locale || config.default_locale || Locale.EN;
+  newKey?: string,
+  newValue?: any
+): string => {
+  const { accountDomain, clientId, cryptrServiceUrl, dedicatedServer } = config;
+  const cryptrBaseUrl = dedicatedServer
+    ? cryptrServiceUrl
+    : [cryptrServiceUrl, 'a', accountDomain, ''].join('/');
   const {
+    pkce: { codeChallenge, codeChallengeMethod, state: clientState },
     redirectUri,
     scope,
-    pkce: { state: clientState, codeChallenge, codeChallengeMethod },
   } = transaction;
-  let queryParams = [
-    ['client_id', client_id] as QueryParam<string, string>,
-    ['locale', locale] as QueryParam<string, string>,
-    ['scope', scope] as QueryParam<string, string>,
-    ['client_state', clientState] as QueryParam<string, string>,
-    ['redirect_uri', redirectUri] as QueryParam<string, string>,
-    ['code_challenge', codeChallenge] as QueryParam<string, string>,
-    ['code_challenge_method', codeChallengeMethod] as QueryParam<
-      string,
-      string
-    >,
-  ];
-  if (domain !== undefined && domain.trim() !== '') {
-    queryParams.push(['domain', domain] as QueryParam<string, string>);
+  const locale = transaction.locale || config.defaultLocale || Locale.EN;
+  let baseParams = new URLSearchParams();
+  baseParams.append('client_id', clientId);
+  baseParams.append('client_state', clientState);
+  baseParams.append('code_challenge', codeChallenge);
+  baseParams.append('code_challenge_method', codeChallengeMethod);
+  baseParams.append('locale', locale);
+  baseParams.append('redirect_uri', redirectUri);
+  baseParams.append('scope', scope);
+  if (newKey !== undefined && newValue !== undefined) {
+    baseParams.append(newKey, newValue);
   }
-  return urlBuilder([cryptrBaseUrl], queryParams);
+  return buildURI(cryptrBaseUrl, baseParams);
 };
 
-export const emailGatewayUrl = (
+export const domainUrl = (
+  config: PreparedCryptrConfig,
+  transaction: Transaction,
+  domain: string
+) => {
+  return signInUrl(config, transaction, 'domain', domain);
+};
+
+export const emailUrl = (
   config: PreparedCryptrConfig,
   transaction: Transaction,
   email: string
 ) => {
-  const { client_id, cryptr_base_url, dedicated_server, tenant_domain } =
-    config;
-  const cryptrBaseUrl = dedicated_server
-    ? cryptr_base_url
-    : [cryptr_base_url, 't', tenant_domain, ''].join('/');
-  const locale = transaction.locale || config.default_locale || Locale.EN;
-  const {
-    redirectUri,
-    scope,
-    pkce: { state: clientState, codeChallenge, codeChallengeMethod },
-  } = transaction;
-  let queryParams = [
-    ['client_id', client_id] as QueryParam<string, string>,
-    ['locale', locale] as QueryParam<string, string>,
-    ['scope', scope] as QueryParam<string, string>,
-    ['client_state', clientState] as QueryParam<string, string>,
-    ['redirect_uri', redirectUri] as QueryParam<string, string>,
-    ['code_challenge', codeChallenge] as QueryParam<string, string>,
-    ['code_challenge_method', codeChallengeMethod] as QueryParam<
-      string,
-      string
-    >,
-    ['email', email] as QueryParam<string, string>,
-  ];
-  return urlBuilder([cryptrBaseUrl], queryParams);
+  return signInUrl(config, transaction, 'email', email);
 };
 
-export const revokeTokenUrl = (
-  config: PreparedCryptrConfig,
-  refreshToken: string
+const buildURI = (
+  hostname: string,
+  queryParamsObject: URLSearchParams
 ): string => {
-  const { cryptr_base_url, tenant_domain, client_id } = config;
-  let domain = organizationDomain(refreshToken) || tenant_domain;
-  let urlParts = [
-    cryptr_base_url,
-    'api',
-    'v1',
-    'tenants',
-    domain,
-    client_id,
-    'oauth',
-    'token',
-    'revoke',
-  ];
+  const url = new URL(hostname);
+  // url.search = queryParamsObject.toString();
+  return url.toString() + '?' + queryParamsObject.toString();
+};
+
+export const universalTokenUrl = (
+  config: PreparedCryptrConfig,
+  orgDomain: string
+): string => {
+  let urlParts = [config.cryptrServiceUrl, 'org', orgDomain, 'oauth2', 'token'];
   return urlBuilder(urlParts);
 };
 
-export const sloAfterRevokeTokenUrl = (
-  config: PreparedCryptrConfig,
-  sloCode: string
-): string => {
-  const { cryptr_base_url, tenant_domain, client_id, default_redirect_uri } =
-    config;
-  let urlParts = [
-    cryptr_base_url,
-    'api',
-    'v1',
-    'tenants',
-    tenant_domain,
-    client_id,
-    'oauth',
-    'token',
-    'slo-after-revoke-token',
-  ];
-  let queryParams = [
-    ['slo_code', sloCode] as QueryParam<string, string>,
-    ['target_url', default_redirect_uri] as QueryParam<string, string>,
-  ];
-  return urlBuilder(urlParts, queryParams);
+const urlBuilder = (urlParts: Array<string>): string => {
+  let url = new URL(urlParts.join('/'));
+  return url.href;
 };
 
-export const refreshTokenUrl = (
-  config: PreparedCryptrConfig,
-  refreshTransaction: Transaction,
-  refreshToken: string
-): string => {
-  const { cryptr_base_url, tenant_domain, client_id } = config;
-  const {
-    pkce: { state: pkceState },
-  } = refreshTransaction;
-  let domain = organizationDomain(refreshToken) || tenant_domain;
-  let urlParts = [
-    cryptr_base_url,
-    'api',
-    'v1',
-    'tenants',
-    domain,
-    client_id,
-    pkceState,
-    'oauth',
-    'client',
-    'token',
-  ];
-  return urlBuilder(urlParts);
-};
-
-export const decoratedRequestInit = (
-  accessToken?: string,
-  init?: RequestInit
+export const universalTokensBody = (
+  transaction: Transaction,
+  params: any,
+  config: PreparedCryptrConfig
 ) => {
-  return accessToken
-    ? {
-        ...init,
-        headers: { ...init?.headers, Authorization: `Bearer ${accessToken}` },
-      }
-    : init;
+  const {
+    nonce,
+    pkce: { codeVerifier, state },
+  } = transaction;
+  const { code, request_id } = params;
+  const { clientId } = config;
+  return JSON.stringify({
+    grant_type: 'authorization_code',
+    client_id: clientId,
+    code: code,
+    code_verifier: codeVerifier,
+    nonce: nonce,
+    request_id: request_id,
+    client_state: state,
+  });
 };
 
 export const jsonApiRequest = (
@@ -218,4 +105,62 @@ export const jsonApiRequest = (
     },
     body: body,
   });
+};
+
+export const extractParamsFromUri = (uri: string): IHash<any> => {
+  let regex = /[?&]([^=#]+)=([^&#]*)/g;
+  let params: IHash<any> = {};
+  let match;
+  while ((match = regex.exec(uri))) {
+    let key = match[1];
+    let val = match[2];
+    if (key) {
+      params[key] = val;
+    }
+  }
+  return params;
+};
+
+export const logOutBody = (
+  config: PreparedCryptrConfig,
+  accessToken?: string,
+  refreshToken?: string
+): string | undefined => {
+  const { clientId } = config;
+  const token = refreshToken || accessToken;
+  if (token) {
+    let tokenTypeHint = refreshToken ? 'refresh_token' : 'access_token';
+    return JSON.stringify({
+      token: token,
+      token_type_hint: tokenTypeHint,
+      client_id: clientId,
+    });
+  }
+  return undefined;
+};
+
+export const revokeTokenUrl = (config: PreparedCryptrConfig): string => {
+  const { cryptrServiceUrl } = config;
+  let urlParts = [cryptrServiceUrl, 'oauth', 'revoke'];
+  return urlBuilder(urlParts);
+};
+
+export const refreshBody = (
+  refreshToken: string,
+  refreshTransaction: Transaction,
+  config: PreparedCryptrConfig
+) => {
+  const { nonce } = refreshTransaction;
+  return JSON.stringify({
+    client_id: config.clientId,
+    grant_type: 'refresh_token',
+    nonce: nonce,
+    token: refreshToken,
+  });
+};
+
+export const refreshTokenUrl = (config: PreparedCryptrConfig): string => {
+  const { cryptrServiceUrl } = config;
+  let urlParts = [cryptrServiceUrl, 'oauth', 'token'];
+  return urlBuilder(urlParts);
 };
