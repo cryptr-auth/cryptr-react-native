@@ -105,7 +105,7 @@ RCT_EXPORT_METHOD(getRefresh:(RCTResponseSenderBlock)callback
     }
 
     else {
-        errorCallback(@[@"No refresh found"]);
+        errorCallback(@[@"IOS No refresh found"]);
     }
 
 }
@@ -155,10 +155,28 @@ RCT_EXPORT_METHOD(startAuthentication:(NSURL *)url
     }
 }
 
-#pragma mark - ASWebAuthenticationPresentationContextProviding
+- (UIWindow *)presentationAnchorForWebAuthenticationSession:(ASWebAuthenticationSession *)session API_AVAILABLE(ios(13.0)) {
+    UIWindow *window = nil;
+    if (@available(iOS 13.0, *)) {
+        for (UIWindowScene *windowScene in [UIApplication sharedApplication].connectedScenes) {
+            if (windowScene.activationState == UISceneActivationStateForegroundActive) {
+                window = windowScene.windows.firstObject;
+                break;
+            }
+        }
+    }
+    return window;
+}
+// Handle incoming URL
+- (void)handleOpenURL:(NSURL *)url {
+    if (url) {
+        RCTLogInfo(@"You specified a url.");
+        RCTLogInfo(@"String variable: %@", url);
+    }
+}
 
-- (ASPresentationAnchor)presentationAnchorForWebAuthenticationSession:(ASWebAuthenticationSession *)session  API_AVAILABLE(ios(13.0)){
-   return [UIApplication sharedApplication].keyWindow;
+- (NSArray<NSString *> *)supportedEvents {
+    return @[@"urlOpened"];
 }
 
 @end

@@ -60,4 +60,16 @@ static void InitializeFlipper(UIApplication *application) {
 #endif
 }
 
+// Handle deep links and universal links
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options
+{
+  return [RCTLinkingManager application:app openURL:url options:options];
+}
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity
+restorationHandler:(void (^)(NSArray *))restorationHandler
+{
+  return [RCTLinkingManager application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
+}
+
 @end
