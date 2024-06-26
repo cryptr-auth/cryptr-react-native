@@ -78,6 +78,7 @@ android/keystores/debug.keystore
 lib/
 
 example/.yarn
+example/ios/CryptrReactNativeExample.xcodeproj/project.pbxproj
 
 .env
 
