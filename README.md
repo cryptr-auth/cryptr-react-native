@@ -7,6 +7,8 @@ React Native SDK for Cryptr Authentication through SSO
 - [@cryptr/cryptr-react-native](#cryptrcryptr-react-native)
   - [Summary](#summary)
   - [Expo integration](#expo-integration)
+    - [Run below commands](#run-below-commands)
+    - [Add plugin to handle android's manifest update](#add-plugin-to-handle-androids-manifest-update)
   - [Prerequisites](#prerequisites)
     - [Android](#android)
     - [iOS](#ios)
@@ -35,7 +37,65 @@ React Native SDK for Cryptr Authentication through SSO
 
 ## Expo integration
 
-:warning: this is not compatible with Expo Go (neither `link`) and requires a run (`expo run`)
+:warning: Follow below steps to use our SDK with Expo
+
+### Run below commands
+
+```bash
+npm i @cryptr/cryptr-react-native
+
+// Expo link
+(npx) expo install @cryptr/cryptr-react-native
+
+```
+
+### Add plugin to handle android's manifest update
+
+1. Create a file to insert in your expo config, ex named `insertCryptrStrategyPlugin.js` with below code
+
+```javascript
+const { withAppBuildGradle } = require('@expo/config-plugins');
+
+module.exports = function withAndroidStrategiesPlugin(config) {
+  return withAppBuildGradle(config, (config) => {
+    const targetSdkVersionLine = "targetSdkVersion rootProject.ext.targetSdkVersion";
+    const manifestPlaceholders = 'manifestPlaceholders = [cryptrDomain: "your-app-domain", cryptrScheme: "cryptr"]';
+
+    // Check if the manifestPlaceholders already exist
+    if (!config.modResults.contents.includes(manifestPlaceholders)) {
+      config.modResults.contents = config.modResults.contents.replace(
+        targetSdkVersionLine,
+        `${targetSdkVersionLine}\n        ${manifestPlaceholders}`
+      );
+    }
+
+    return config;
+  });
+};
+```
+
+2. add config to your expo config
+
+Update your `app.json` file to add the above file as plugin
+
+```json
+// ./app.json
+{
+  "expo" : {
+    //...
+    "plugins": [
+      //...
+      "./insertCryptrStrategyPlugin"
+    ]
+  }
+}
+````
+
+3. rebuild Expo
+
+```bash
+(npx) expo prebuild
+```
 
 ## Prerequisites
 
