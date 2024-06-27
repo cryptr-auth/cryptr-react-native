@@ -166,7 +166,7 @@ The return type is a <u>**key/value pair Object.**</u>
 const { user } = useCryptr()
 
 // ...
-user()
+user?.email
 ```
 
 #### accessToken
@@ -315,3 +315,5 @@ Configuration change
 Components/hooks
 
 If you either used `signInWithDomain()` hook or `<CryptrGatewayButton/>` component without `domain` parameter, please use now `signIn` or `<SignInButton/>` accordingly
+
+For easier usage of `user` hook this one changed from function `() => User | undefined`, now it's directly a `User | undefined`

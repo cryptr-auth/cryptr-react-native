@@ -1,6 +1,6 @@
 {
   "name": "@cryptr/cryptr-react-native",
-  "version": "1.0.0",
+  "version": "1.0.0-rc3",
   "description": "React Native SDK for Cryptr Authentication",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -45,9 +45,6 @@
     "url": "http://localhost:3000/issues"
   },
   "homepage": "http://localhost:3000#readme",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
-  },
   "devDependencies": {
     "@evilmartians/lefthook": "^1.5.0",
     "@react-native/eslint-config": "^0.74.84",
@@ -131,7 +128,8 @@
   },
   "eslintIgnore": [
     "node_modules/",
-    "lib/"
+    "lib/",
+    "coverage/"
   ],
   "prettier": {
     "quoteProps": "consistent",
