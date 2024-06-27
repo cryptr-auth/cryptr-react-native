@@ -84,3 +84,6 @@ example/ios/CryptrReactNativeExample.xcodeproj/project.pbxproj
 
 
 coverage/
+
+
+*.dt.ts
