@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { CryptrReducerActionKind } from './enums';
+import type { CryptrUser } from './types';
 
 export interface CryptrConfig {
   accountDomain: string;
@@ -46,6 +47,7 @@ export interface CryptrState {
   isLoading: boolean;
   accessToken?: string;
   idToken?: string;
+  user?: CryptrUser;
   error?: any;
   error_description?: string;
 }

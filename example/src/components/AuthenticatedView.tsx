@@ -44,20 +44,18 @@ const AuthenticatedView = () => {
     <>
       <Text style={styles.textAuthenticated}>You're logged in</Text>
       <HorizontalDivider />
-      {user() && (
+      {user && (
         <>
-          <TokenView title={user()!.org} value={`Issued at ${user()!.iat}`} />
-          <TokenView title={'Env'} value={user()!.env || '?'} />
+          <TokenView title={user!.org} value={`Issued at ${user!.iat}`} />
+          <TokenView title={'Env'} value={user!.env || '?'} />
           <TokenView
             title={'Identities'}
-            value={JSON.stringify(user()?.identities, null, 2)}
+            value={JSON.stringify(user?.identities, null, 2)}
           />
         </>
       )}
       {accessToken && <TokenView title="Access token" value={accessToken} />}
-      {user() && (
-        <TokenView title="User" value={JSON.stringify(user(), null, 2)} />
-      )}
+      {user && <TokenView title="User" value={JSON.stringify(user, null, 2)} />}
       <HorizontalDivider />
       <LogOutButton
         successCallback={logOutCallback}

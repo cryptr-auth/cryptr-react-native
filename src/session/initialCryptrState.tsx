@@ -5,6 +5,7 @@ const initialCryptrState: CryptrState = {
   isAuthenticated: false,
   accessToken: undefined,
   idToken: undefined,
+  user: undefined,
 };
 
 export default initialCryptrState;
