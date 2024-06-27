@@ -28,7 +28,6 @@ import {
 import Jwt from '../utils/jwt';
 import Cryptr from '../Cryptr';
 import { DeviceEventEmitter } from 'react-native';
-import type { CryptrUser } from '../utils/types';
 
 const CryptrProvider: React.FC<ProviderProps> = ({
   children,
@@ -327,17 +326,12 @@ const CryptrProvider: React.FC<ProviderProps> = ({
     return jsonApiRequest(refreshTokenUrl(config), body);
   };
 
-  const getUser = (): CryptrUser | undefined => {
-    return state.idToken ? (Jwt.body(state.idToken) as CryptrUser) : undefined;
-  };
-
   return (
     <CryptrContext.Provider
       data-testid="CryptrProvider"
       value={{
         ...state,
         config: () => config,
-        user: () => getUser(),
         logOut: (
           successCallback?: (data: any) => any,
           errorCallback?: (data: any) => any

@@ -1,5 +1,7 @@
 import { CryptrReducerActionKind } from '../utils/enums';
 import type { CryptrAction, CryptrState } from '../utils/interfaces';
+import Jwt from '../utils/jwt';
+import type { CryptrUser } from '../utils/types';
 
 const CryptrReducer = (state: CryptrState, action: CryptrAction) => {
   switch (action.type) {
@@ -18,11 +20,15 @@ const CryptrReducer = (state: CryptrState, action: CryptrAction) => {
         error_description: undefined,
       };
     case CryptrReducerActionKind.AUTHENTICATED:
+      let accessToken = action.payload && action.payload.access_token;
+      let idToken = action.payload && action.payload.id_token;
+      let userVal = idToken ? (Jwt.body(idToken) as CryptrUser) : undefined;
       return {
         ...state,
         isAuthenticated: true,
-        accessToken: action.payload && action.payload.access_token,
-        idToken: action.payload && action.payload.id_token,
+        accessToken: accessToken,
+        idToken: idToken,
+        user: userVal,
         isLoading: false,
       };
     case CryptrReducerActionKind.UNAUTHENTICATED:
@@ -33,6 +39,7 @@ const CryptrReducer = (state: CryptrState, action: CryptrAction) => {
         error_description: action.payload && action.payload.error_description,
         accessToken: undefined,
         idToken: undefined,
+        user: undefined,
         isLoading: false,
       };
     case CryptrReducerActionKind.ERROR:

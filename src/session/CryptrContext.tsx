@@ -1,7 +1,6 @@
 import { createContext } from 'react';
 import initialCryptrState from './initialCryptrState';
 import type { CryptrConfig } from '../utils/interfaces';
-import type { CryptrUser } from '../utils/types';
 
 const error = (...args: any) => {
   console.debug(args);
@@ -33,7 +32,6 @@ const initialContext = {
     successCallback?: (data: any) => any,
     errorCallback?: (data: any) => any
   ) => void,
-  user: error as unknown as () => CryptrUser | undefined,
 };
 
 const CryptrContext = createContext(initialContext);
