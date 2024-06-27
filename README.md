@@ -39,7 +39,7 @@ React Native SDK for Cryptr Authentication through SSO
 
 :warning: Follow below steps to use our SDK with Expo
 
-### Run below commands
+### Install SDK and link to Expo
 
 ```bash
 npm i @cryptr/cryptr-react-native
