@@ -7,7 +7,7 @@ React Native SDK for Cryptr Authentication through SSO
 - [@cryptr/cryptr-react-native](#cryptrcryptr-react-native)
   - [Summary](#summary)
   - [Expo integration](#expo-integration)
-    - [Run below commands](#run-below-commands)
+    - [Install SDK and link to Expo](#install-sdk-and-link-to-expo)
     - [Add plugin to handle android's manifest update](#add-plugin-to-handle-androids-manifest-update)
   - [Prerequisites](#prerequisites)
     - [Android](#android)
