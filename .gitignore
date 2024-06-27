@@ -89,3 +89,4 @@ coverage/
 
 *.npmrc
 .yarnrc
+example/android/gradlew*
