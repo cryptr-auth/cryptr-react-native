@@ -79,6 +79,7 @@ const CryptrProvider: React.FC<ProviderProps> = ({
           DeviceEventEmitter.addListener('onNavigationEvent', (event) => {
             handleSecuredViewEvent(event);
           });
+          setUnloading();
           refreshTokens((data: any) => {
             const { error } = data;
             error && setError(error);
@@ -302,7 +303,8 @@ const CryptrProvider: React.FC<ProviderProps> = ({
               errorCallback && errorCallback(error);
             });
         } else {
-          console.warn('no refreh found');
+          setUnloading();
+          console.warn('no refresh found');
         }
       },
       (error: any) => {
