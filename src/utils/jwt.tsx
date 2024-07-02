@@ -122,10 +122,12 @@ export const validatesAudience = (
   config: PreparedCryptrConfig
 ): void | boolean => {
   const expectedAudience =
-    jwtBody.jtt === 'openid' ? config.clientId : config.audience;
+    jwtBody.jtt === 'openid' && jwtBody.ver > 2
+      ? config.clientId
+      : config.audience;
   if (jwtBody.aud !== expectedAudience) {
     throw new Error(
-      `Audience (aud) ${jwtBody.aud} claim is not compliant with ${expectedAudience} from config`
+      `Audience (aud) ${jwtBody.aud} claim for ${jwtBody.jtt} token is not compliant with ${expectedAudience} from config`
     );
   }
   return true;
