@@ -1,3 +1,4 @@
+import 'core-js/stable/atob';
 import { jwtDecode } from 'jwt-decode';
 import { JWT, RS256 } from './constants';
 import type { PreparedCryptrConfig } from './interfaces';
