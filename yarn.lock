@@ -4702,7 +4702,7 @@ __metadata:
   checksum: 5e7430329358bced08c30950512d2081aea0a5652b4c5892cbb3c4a6db05b0d3893a191a955162a07fdb5f4fe74e61b6429fdb503f54e062336d76e43c9555d9
   languageName: node
   linkType: hard
-  
+
 "core-js@npm:^3.37.1":
   version: 3.37.1
   resolution: "core-js@npm:3.37.1"
